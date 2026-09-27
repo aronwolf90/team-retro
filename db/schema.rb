@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_27_180258) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_27_233642) do
   create_table "boards", force: :cascade do |t|
     t.string "name", null: false
-    t.text "context"
     t.integer "max_votes", default: 6, null: false
     t.boolean "hide_votes", default: false, null: false
     t.boolean "hide_authors", default: false, null: false

@@ -6,10 +6,6 @@
     <span>Board name</span>
     <%= f.text_field :name, class: "input", required: true, maxlength: 120, autofocus: true %>
   </label>
-  <label class="field">
-    <span>Context <small class="muted">(optional – what is this retro about?)</small></span>
-    <%= f.text_area :context, class: "input", rows: 3, placeholder: "Sprint 42 · goals, what happened, things to keep in mind" %>
-  </label>
   <label class="field field--inline">
     <span>Max votes per person</span>
     <%= f.number_field :max_votes, class: "input input--sm", min: 0, max: 99 %>

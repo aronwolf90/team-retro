@@ -22,9 +22,6 @@
             <span class="board-item__meta">
               <%= pluralize(board.cards_count, "card") %> · created <%= board.created_at.strftime("%b %-d, %Y") %>
             </span>
-            <% if board.context.present? %>
-              <span class="board-item__context"><%= truncate(board.context, length: 140) %></span>
-            <% end %>
           <% end %>
           <div class="board-item__actions">
             <%= button_to "Delete", board, method: :delete, class: "btn btn--danger btn--sm", form: { data: { turbo_confirm: "Delete “#{board.name}” and all its cards?" } } %>

@@ -8,9 +8,6 @@
       <%= link_to "‹ Boards", boards_path, class: "btn btn--ghost btn--sm" %>
       <div>
         <h1><%= @board.name %></h1>
-        <% if @board.context.present? %>
-          <p class="board__context"><%= simple_format(@board.context, {}, wrapper_tag: "span") %></p>
-        <% end %>
       </div>
     </div>
 
@@ -41,7 +38,7 @@
             <label class="check">Max votes <%= f.number_field :max_votes, min: 0, max: 99, class: "input input--xs", data: { action: "change->autosubmit#submit" } %></label>
           <% end %>
           <hr>
-          <%= link_to "✎ Edit name & context", edit_board_path(@board), class: "menu__item" %>
+          <%= link_to "✎ Rename board", edit_board_path(@board), class: "menu__item" %>
           <%= button_to "🗑 Delete board", @board, method: :delete, class: "menu__item menu__item--danger", form: { data: { turbo_confirm: "Delete this board and all its cards?" } } %>
         </div>
       </details>

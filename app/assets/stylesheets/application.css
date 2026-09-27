@@ -91,7 +91,6 @@ select.input { appearance: auto; }
 .board-item__link { display: flex; flex-direction: column; gap: .15rem; text-decoration: none; color: inherit; flex: 1; min-width: 0; }
 .board-item__name { font-weight: 700; font-size: 1.05rem; }
 .board-item__meta { color: var(--muted); font-size: .85rem; }
-.board-item__context { color: var(--muted); font-size: .9rem; }
 .board-item__actions { display: flex; gap: .35rem; align-items: center; }
 
 /* ---------- Auth ---------- */
@@ -116,7 +115,6 @@ select.input { appearance: auto; }
 .board__header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1rem; }
 .board__title { display: flex; align-items: flex-start; gap: .5rem; }
 .board__title h1 { font-size: 1.35rem; }
-.board__context { color: var(--muted); font-size: .9rem; white-space: pre-line; }
 .board__tools { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
 .votes-left { font-size: .85rem; background: var(--surface); border: 1px solid var(--border); padding: .35rem .65rem; border-radius: 999px; }
 .votes-left--empty { color: var(--danger); border-color: #fecaca; }

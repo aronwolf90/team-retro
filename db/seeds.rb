@@ -1,6 +1,5 @@
 # Example board so the app is not empty on first start.
 board = Board.find_or_create_by!(name: "Example sprint retro") do |b|
-  b.context = "A sample board. Drag cards between columns, drop one card on another to merge them, vote with 👍."
   b.max_votes = 6
 end
 
