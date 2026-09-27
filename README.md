@@ -66,7 +66,8 @@ The app ships with the standard Rails [Kamal](https://kamal-deploy.org) setup:
 
 Every push to `main` is deployed automatically by the `deploy` job at the end of the CI workflow,
 once all other jobs pass. It needs the repository secrets `SSH_PRIVATE_KEY`, `RAILS_MASTER_KEY`,
-`KAMAL_REGISTRY_PASSWORD` and `TEAM_PASSWORD`.
+`KAMAL_REGISTRY_PASSWORD` and `TEAM_PASSWORD`, plus the repository variable `SSH_KNOWN_HOSTS`
+holding the server's host keys (`ssh-keyscan 62.238.15.241`).
 
 ## Production notes
 
