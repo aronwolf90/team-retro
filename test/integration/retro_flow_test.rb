@@ -34,7 +34,8 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     post board_cards_path(board), params: { card: { lane: "went_well", content: "Shipped it" } }
     post board_cards_path(board), params: { card: { lane: "went_well", content: "Good pairing" } }
     post board_cards_path(board), params: { card: { lane: "to_improve", content: "Flaky CI" } }
-    first, second, third = board.cards.order(:id).to_a
+    post board_cards_path(board), params: { card: { lane: "how_is_everyone", content: "Tired but fine" } }
+    first, second, third = board.cards.order(:id).first(3)
     assert_equal "Sam", first.author_name
 
     # votes are capped by max_votes
@@ -80,6 +81,7 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     get export_board_path(board)
     assert_response :success
     assert_match "Went Well,Shipped it,1,Sam,Good pairing", response.body
+    assert_match "How is everyone?,Tired but fine", response.body
 
     delete board_path(board)
     assert_equal 0, Board.count

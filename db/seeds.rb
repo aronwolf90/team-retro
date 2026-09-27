@@ -5,6 +5,7 @@ board = Board.find_or_create_by!(name: "Example sprint retro") do |b|
 end
 
 if board.cards.none?
+  board.cards.create!(lane: :how_is_everyone, content: "Tired but happy, the release is out 😅", author_name: "Alex")
   went_well = board.cards.create!(lane: :went_well, content: "Pair programming on the payment bug worked great", author_name: "Alex")
   board.cards.create!(lane: :went_well, content: "Release went out on time 🎉", author_name: "Sam")
   board.cards.create!(lane: :to_improve, content: "Too many meetings on Tuesday", author_name: "Alex")

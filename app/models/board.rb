@@ -1,6 +1,7 @@
 class Board < ApplicationRecord
   # The default EasyRetro-style kanban board: the three columns are fixed.
   COLUMNS = [
+    { key: :how_is_everyone, title: "How is everyone?", color: "blue" },
     { key: :went_well,    title: "Went Well",    color: "green"  },
     { key: :to_improve,   title: "To Improve",   color: "red"    },
     { key: :action_items, title: "Action Items", color: "purple" }

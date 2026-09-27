@@ -15,7 +15,7 @@ one team password and picks a display name.
 - **Login with one team password** (`TEAM_PASSWORD`, defaults to `retro` in development).
 - **Name modal** pops up when the session has no name yet; click your name in the header to change it.
 - **Dashboard** of all boards with card counts, create / delete boards, CSV export.
-- **Classic board**: *Went Well* · *To Improve* · *Action Items* (columns are fixed).
+- **Board**: *How is everyone?* · *Went Well* · *To Improve* · *Action Items* (columns are fixed).
 - **Cards**: add with Enter, inline edit, delete, author shown on the card.
 - **Drag & drop**: reorder inside a column, move between columns, or drop a card on top of another
   card to **merge** them (votes and comments follow). Merged cards can be split again.
