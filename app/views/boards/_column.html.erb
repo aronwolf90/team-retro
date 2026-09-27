@@ -12,12 +12,6 @@
     </span>
   </header>
 
-  <div class="column__cards" data-board-target="list" data-column="<%= column[:key] %>" data-action="dragover->board#dragover drop->board#drop dragleave->board#dragleave">
-    <% cards.each do |card| %>
-      <%= render "cards/card", card: card, board: board, votes_left: votes_left %>
-    <% end %>
-  </div>
-
   <div class="add-card" data-controller="add-card">
     <button type="button" class="add-card__trigger" id="add-card-trigger-<%= column[:key] %>" data-keep-state data-add-card-target="trigger" data-action="add-card#open">＋ Add a card</button>
     <%= form_with url: board_cards_path(board), id: "new-card-#{column[:key]}", class: "new-card", html: { hidden: true }, data: { keep_state: true, preserve_edits: true, add_card_target: "form", action: "turbo:submit-end->add-card#submitted" } do |f| %>
@@ -29,4 +23,10 @@
       </div>
     <% end %>
   </div>
+  <div class="column__cards" data-board-target="list" data-column="<%= column[:key] %>" data-action="dragover->board#dragover drop->board#drop dragleave->board#dragleave">
+    <% cards.each do |card| %>
+      <%= render "cards/card", card: card, board: board, votes_left: votes_left %>
+    <% end %>
+  </div>
+
 </section>
