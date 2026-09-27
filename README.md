@@ -1,5 +1,8 @@
 # Team Retro
 
+> **Note:** This is a hobby project to experiment with vibe coding. The whole app was built by
+> describing what I wanted to Claude Code and iterating on the result. Expect rough edges.
+
 A small, self-hosted clone of the default [EasyRetro](https://easyretro.io) board for **one team**.
 Built with Rails 8, Hotwire (Turbo + Stimulus) and SQLite on top of the stock `rails new`
 skeleton (Kamal, Thruster, RuboCop, Brakeman, GitHub Actions CI). No accounts: everybody shares
