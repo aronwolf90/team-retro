@@ -1,5 +1,7 @@
 # Team Retro
 
+[![CI](https://github.com/aronwolf90/team-retro/actions/workflows/ci.yml/badge.svg)](https://github.com/aronwolf90/team-retro/actions/workflows/ci.yml)
+
 > **Note:** This is a hobby project to experiment with vibe coding. The whole app was built by
 > describing what I wanted to Claude Code and iterating on the result. Expect rough edges.
 
@@ -62,8 +64,8 @@ The app ships with the standard Rails [Kamal](https://kamal-deploy.org) setup:
    `RAILS_MASTER_KEY` (from `config/master.key`) and `TEAM_PASSWORD`.
 3. `bin/kamal setup` for the first deploy, `bin/kamal deploy` afterwards.
 
-Every push to `main` is deployed automatically by the `Deploy` GitHub Actions workflow once `CI`
-passes. It needs the repository secrets `SSH_PRIVATE_KEY`, `RAILS_MASTER_KEY`,
+Every push to `main` is deployed automatically by the `deploy` job at the end of the CI workflow,
+once all other jobs pass. It needs the repository secrets `SSH_PRIVATE_KEY`, `RAILS_MASTER_KEY`,
 `KAMAL_REGISTRY_PASSWORD` and `TEAM_PASSWORD`.
 
 ## Production notes
