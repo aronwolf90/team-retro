@@ -157,9 +157,12 @@ select.input { appearance: auto; }
 .column--green { --col: var(--green); }
 .column--red { --col: var(--red); }
 .column--purple { --col: var(--purple); }
-.column__cards { display: flex; flex-direction: column; gap: .6rem; min-height: 4rem; flex: 1; padding-bottom: 2rem; }
+.column__cards { display: flex; flex-direction: column; gap: .6rem; min-height: 2.5rem; flex: 1; }
 
-.new-card { background: var(--surface); border-radius: 10px; padding: .5rem; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: .4rem; border-top: 3px solid var(--col); }
+.add-card__trigger { width: 100%; text-align: left; background: none; border: 0; border-radius: 8px; padding: .5rem .6rem; font: inherit; font-size: .9rem; font-weight: 600; color: var(--muted); cursor: pointer; }
+.add-card__trigger:hover { background: rgba(0,0,0,.05); color: var(--text); }
+.new-card { background: var(--surface); border-radius: 10px; padding: .5rem; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: .4rem; border-left: 4px solid var(--col); }
+.new-card[hidden] { display: none; }
 .new-card__input { border: 0; padding: .3rem .4rem; resize: none; min-height: 2.6rem; }
 .new-card__input:focus { outline: none; }
 .new-card__actions { display: flex; justify-content: flex-end; gap: .4rem; }

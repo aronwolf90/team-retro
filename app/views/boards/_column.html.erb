@@ -1,6 +1,6 @@
 <% lane_hidden = board.lane_hidden?(column[:key]) %>
 <section class="column column--<%= column[:color] %> <%= 'column--hidden' if lane_hidden %>" data-column="<%= column[:key] %>">
-    <header class="column__header">
+  <header class="column__header">
     <h2><span class="column__dot"></span><%= column[:title] %></h2>
     <span class="column__header-right">
       <%= button_to toggle_hidden_board_path(board, lane: column[:key]), method: :patch,
@@ -12,17 +12,21 @@
     </span>
   </header>
 
-  <%= form_with url: board_cards_path(board), id: "new-card-#{column[:key]}", class: "new-card", data: { preserve_edits: true, controller: "composer", action: "turbo:submit-end->composer#reset" } do |f| %>
-    <%= f.hidden_field :lane, name: "card[lane]", id: nil, value: column[:key] %>
-    <%= f.text_area :content, name: "card[content]", id: nil, rows: 2, class: "input new-card__input", placeholder: "Add a card… (Enter to save)", maxlength: 2000, required: true, data: { action: "keydown->composer#keydown", composer_target: "input" } %>
-    <div class="new-card__actions" data-composer-target="actions">
-      <%= f.submit "Add card", class: "btn btn--primary btn--sm" %>
-    </div>
-  <% end %>
-
   <div class="column__cards" data-board-target="list" data-column="<%= column[:key] %>" data-action="dragover->board#dragover drop->board#drop dragleave->board#dragleave">
     <% cards.each do |card| %>
       <%= render "cards/card", card: card, board: board, votes_left: votes_left %>
+    <% end %>
+  </div>
+
+  <div class="add-card" data-controller="add-card">
+    <button type="button" class="add-card__trigger" id="add-card-trigger-<%= column[:key] %>" data-keep-state data-add-card-target="trigger" data-action="add-card#open">＋ Add a card</button>
+    <%= form_with url: board_cards_path(board), id: "new-card-#{column[:key]}", class: "new-card", html: { hidden: true }, data: { keep_state: true, preserve_edits: true, add_card_target: "form", action: "turbo:submit-end->add-card#submitted" } do |f| %>
+      <%= f.hidden_field :lane, name: "card[lane]", id: nil, value: column[:key] %>
+      <%= f.text_area :content, name: "card[content]", id: nil, rows: 2, class: "input new-card__input", placeholder: "Write a card… (Enter to save, Esc to close)", maxlength: 2000, required: true, data: { action: "keydown->add-card#keydown", add_card_target: "input" } %>
+      <div class="new-card__actions">
+        <button type="button" class="btn btn--ghost btn--sm" data-action="add-card#close">Cancel</button>
+        <%= f.submit "Add card", class: "btn btn--primary btn--sm" %>
+      </div>
     <% end %>
   </div>
 </section>
