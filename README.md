@@ -62,6 +62,10 @@ The app ships with the standard Rails [Kamal](https://kamal-deploy.org) setup:
    `RAILS_MASTER_KEY` (from `config/master.key`) and `TEAM_PASSWORD`.
 3. `bin/kamal setup` for the first deploy, `bin/kamal deploy` afterwards.
 
+Every push to `main` is deployed automatically by the `Deploy` GitHub Actions workflow once `CI`
+passes. It needs the repository secrets `SSH_PRIVATE_KEY`, `RAILS_MASTER_KEY`,
+`KAMAL_REGISTRY_PASSWORD` and `TEAM_PASSWORD`.
+
 ## Production notes
 
 - Set `TEAM_PASSWORD` (the app refuses to boot in production without it) and `SECRET_KEY_BASE`.
