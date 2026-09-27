@@ -58,6 +58,6 @@ class BoardsController < ApplicationController
   end
 
   def board_params
-    params.require(:board).permit(:name, :max_votes, :hide_votes, :hide_authors, :sort_by, hidden_lanes: [])
+    params.require(:board).permit(:name, :max_votes, :hide_votes, :sort_by, hidden_lanes: [])
   end
 end

@@ -23,7 +23,7 @@ one team password and picks a display name.
 - **Voting** with a max number of votes per person (default 6), remove your vote again.
 - **Comments** on every card.
 - **Board options**: hide other people's cards per column while brainstorming (eye button in the column header), hide vote counts,
-  hide authors, change max votes, sort by manual order / newest / most votes.
+  change max votes, sort by manual order or most votes.
 - **Timer** (1–15 min presets, +1 min, stop) shared with the whole team, beeps when done.
 - **Live updates**: every change is broadcast to everyone on the board via Turbo Streams.
 

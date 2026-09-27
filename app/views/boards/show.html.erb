@@ -20,7 +20,7 @@
 
 
       <%= form_with model: @board, class: "inline-form", data: { controller: "autosubmit" } do |f| %>
-        <%= f.select :sort_by, [ [ "Sort: manual order", "order" ], [ "Sort: newest first", "created" ], [ "Sort: most votes", "votes" ] ], {}, class: "input input--sm", data: { action: "change->autosubmit#submit" }, "aria-label": "Sort cards" %>
+        <%= f.select :sort_by, [ [ "Sort: manual order", "order" ], [ "Sort: most votes", "votes" ] ], {}, class: "input input--sm", data: { action: "change->autosubmit#submit" }, "aria-label": "Sort cards" %>
       <% end %>
 
       <details class="menu" data-keep-state id="board-menu">
@@ -34,7 +34,6 @@
             <% end %>
             <hr>
             <label class="check"><%= f.check_box :hide_votes, data: { action: "autosubmit#submit" } %> Hide vote counts</label>
-            <label class="check"><%= f.check_box :hide_authors, data: { action: "autosubmit#submit" } %> Hide authors</label>
             <label class="check">Max votes <%= f.number_field :max_votes, min: 0, max: 99, class: "input input--xs", data: { action: "change->autosubmit#submit" } %></label>
           <% end %>
           <hr>

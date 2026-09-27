@@ -20,7 +20,7 @@
             <%= simple_format(child.content, { class: "card__text" }) %>
           <% end %>
           <div class="card__child-meta">
-            <% unless board.hide_authors || child.author_name.blank? %><span class="muted"><%= child.author_name %></span><% end %>
+            <% if child.author_name.present? %><span class="muted"><%= child.author_name %></span><% end %>
             <%= button_to "unmerge", unmerge_card_path(child), method: :post, class: "linkish", title: "Split this card back out" %>
           </div>
         </div>
@@ -38,7 +38,7 @@
     <% end %>
 
     <footer class="card__footer">
-      <% unless board.hide_authors || card.author_name.blank? %>
+      <% if card.author_name.present? %>
         <span class="card__author" title="Written by"><%= card.author_name %></span>
       <% end %>
       <span class="card__spacer"></span>

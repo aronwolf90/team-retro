@@ -8,7 +8,7 @@ class Board < ApplicationRecord
     { key: :action_items, title: "Action Items", color: "purple" }
   ].freeze
 
-  SORT_OPTIONS = %w[order created votes].freeze
+  SORT_OPTIONS = %w[order votes].freeze
   LANE_KEYS = COLUMNS.map { |c| c[:key].to_s }.freeze
 
   # Columns whose cards are hidden from everyone except their author.
@@ -65,10 +65,10 @@ class Board < ApplicationRecord
     scope = root_cards.where(lane: column_key)
       .select("cards.*, (SELECT COUNT(*) FROM votes WHERE votes.card_id = cards.id) AS votes_count")
       .includes(:votes, :comments, children: [ :votes, :comments ])
-    case sort_by
-    when "created" then scope.order(created_at: :desc)
-    when "votes"   then scope.order(Arel.sql("votes_count DESC"), :position, :created_at)
-    else scope.order(:position, :created_at)
+    if sort_by == "votes"
+      scope.order(Arel.sql("votes_count DESC"), :position, :created_at)
+    else
+      scope.order(:position, :created_at)
     end
   end
 

@@ -18,7 +18,6 @@
       <label class="check"><%= f.check_box :hidden_lanes, { multiple: true, checked: board.lane_hidden?(column[:key]), id: "board_hidden_lanes_#{column[:key]}" }, column[:key], nil %> Hide <%= column[:title] %> cards</label>
     <% end %>
     <label class="check"><%= f.check_box :hide_votes %> Hide vote counts</label>
-    <label class="check"><%= f.check_box :hide_authors %> Hide card authors</label>
   </fieldset>
   <label class="field field--inline">
     <span>Columns</span>
