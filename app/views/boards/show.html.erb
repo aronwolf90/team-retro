@@ -2,7 +2,7 @@
 <% content_for :body_class, "board-page" %>
 <%= turbo_stream_from @board %>
 
-<div class="board" data-controller="board filter" data-board-move-url-value="<%= move_card_path(":id") %>" data-board-merge-url-value="<%= merge_card_path(":id") %>" data-board-sortable-value="<%= @board.sort_by == "order" %>">
+<div class="board" data-controller="board" data-board-move-url-value="<%= move_card_path(":id") %>" data-board-merge-url-value="<%= merge_card_path(":id") %>" data-board-sortable-value="<%= @board.sort_by == "order" %>">
   <div class="board__header">
     <div class="board__title">
       <%= link_to "‹ Boards", boards_path, class: "btn btn--ghost btn--sm" %>
@@ -21,7 +21,6 @@
 
       <%= render "boards/timer", board: @board %>
 
-      <input type="search" id="card-filter" data-turbo-permanent class="input input--sm filter" placeholder="Filter cards…" data-filter-target="input" data-action="input->filter#apply" aria-label="Filter cards by text">
 
       <%= form_with model: @board, class: "inline-form", data: { controller: "autosubmit" } do |f| %>
         <%= f.select :sort_by, [ [ "Sort: manual order", "order" ], [ "Sort: newest first", "created" ], [ "Sort: most votes", "votes" ] ], {}, class: "input input--sm", data: { action: "change->autosubmit#submit" }, "aria-label": "Sort cards" %>

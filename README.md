@@ -25,7 +25,6 @@ one team password and picks a display name.
 - **Board options**: hide other people's cards per column while brainstorming (eye button in the column header), hide vote counts,
   hide authors, change max votes, sort by manual order / newest / most votes.
 - **Timer** (1–15 min presets, +1 min, stop) shared with the whole team, beeps when done.
-- **Text filter** for cards.
 - **Live updates**: every change is broadcast to everyone on the board via Turbo Streams.
 
 ## Running it

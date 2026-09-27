@@ -4,7 +4,7 @@
   hidden = lane_hidden && !mine
   my_votes = card.votes_by(current_user_token)
 %>
-<article id="<%= dom_id(card) %>" class="card <%= 'card--hidden' if hidden %> <%= 'card--merged' if card.merged? %>" draggable="true" data-card-id="<%= card.id %>" data-filter-target="card" data-action="dragstart->board#dragstart dragend->board#dragend">
+<article id="<%= dom_id(card) %>" class="card <%= 'card--hidden' if hidden %> <%= 'card--merged' if card.merged? %>" draggable="true" data-card-id="<%= card.id %>" data-action="dragstart->board#dragstart dragend->board#dragend">
   <div class="card__body" data-controller="editable toggle" <%= tag.attributes("data-editable-content-value": card.content) unless hidden %>>
     <div class="card__content" data-editable-target="view">
       <% if hidden %>
