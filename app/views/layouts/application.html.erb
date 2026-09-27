@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= content_for(:title) || "Team Retro" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="application-name" content="Team Retro">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= turbo_refreshes_with method: :morph, scroll: :preserve %>
+    <%= yield :head %>
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="<%= content_for(:body_class) %>">
+    <header class="topbar">
+      <%= link_to root_path, class: "brand" do %>
+        <span class="brand__logo">↺</span> Team Retro
+      <% end %>
+      <nav class="topbar__nav">
+        <% if current_user_name %>
+          <button type="button" class="btn btn--ghost" title="Change your name" data-controller="dialog-opener" data-dialog-opener-id-value="name-dialog" data-action="dialog-opener#open">
+            👤 <%= current_user_name %>
+          </button>
+        <% end %>
+        <%= button_to "Log out", session_path, method: :delete, class: "btn btn--ghost", form: { data: { turbo_confirm: "Log out of the team board?" } } %>
+      </nav>
+    </header>
+
+    <%= render "shared/flash" %>
+
+    <main class="main">
+      <%= yield %>
+    </main>
+
+    <%= render "shared/name_modal" %>
+  </body>
+</html>

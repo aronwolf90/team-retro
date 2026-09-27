@@ -1,0 +1,35 @@
+<%= form_with model: board, class: "stack" do |f| %>
+  <% if board.errors.any? %>
+    <div class="flash flash--alert"><%= board.errors.full_messages.to_sentence %></div>
+  <% end %>
+  <label class="field">
+    <span>Board name</span>
+    <%= f.text_field :name, class: "input", required: true, maxlength: 120, autofocus: true %>
+  </label>
+  <label class="field">
+    <span>Context <small class="muted">(optional – what is this retro about?)</small></span>
+    <%= f.text_area :context, class: "input", rows: 3, placeholder: "Sprint 42 · goals, what happened, things to keep in mind" %>
+  </label>
+  <label class="field field--inline">
+    <span>Max votes per person</span>
+    <%= f.number_field :max_votes, class: "input input--sm", min: 0, max: 99 %>
+  </label>
+  <fieldset class="field">
+    <legend>Board options</legend>
+    <span class="muted">Hide cards written by others (per column, reveal after brainstorming):</span>
+    <%= f.hidden_field :hidden_lanes, multiple: true, value: "", id: nil %>
+    <% Board::COLUMNS.each do |column| %>
+      <label class="check"><%= f.check_box :hidden_lanes, { multiple: true, checked: board.lane_hidden?(column[:key]), id: "board_hidden_lanes_#{column[:key]}" }, column[:key], nil %> Hide <%= column[:title] %> cards</label>
+    <% end %>
+    <label class="check"><%= f.check_box :hide_votes %> Hide vote counts</label>
+    <label class="check"><%= f.check_box :hide_authors %> Hide card authors</label>
+  </fieldset>
+  <label class="field field--inline">
+    <span>Columns</span>
+    <span class="muted">Went Well · To Improve · Action Items</span>
+  </label>
+  <div class="form-actions">
+    <%= link_to "Cancel", board.persisted? ? board : boards_path, class: "btn btn--ghost" %>
+    <%= f.submit board.persisted? ? "Save settings" : "Create board", class: "btn btn--primary" %>
+  </div>
+<% end %>

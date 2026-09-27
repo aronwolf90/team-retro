@@ -1,0 +1,16 @@
+<div class="timer <%= 'timer--running' if board.timer_running? %> <%= 'timer--done' if board.timer_finished? %>" data-controller="timer" data-timer-ends-at-value="<%= board.timer_ends_at&.iso8601 %>">
+  <% if board.timer_ends_at %>
+    <span class="timer__display" data-timer-target="display"><%= Time.at([ board.timer_ends_at - Time.current, 0 ].max).utc.strftime("%M:%S") %></span>
+    <%= button_to "+1 min", board_timer_path(board), method: :patch, class: "btn btn--sm btn--ghost", title: "Add one minute" %>
+    <%= button_to "■", board_timer_path(board), method: :delete, class: "btn btn--sm btn--ghost", title: "Stop the timer" %>
+  <% else %>
+    <details class="menu" data-keep-state id="timer-menu">
+      <summary class="btn btn--sm">⏱ Timer</summary>
+      <div class="menu__body menu__body--row">
+        <% [ 1, 3, 5, 10, 15 ].each do |minutes| %>
+          <%= button_to "#{minutes} min", board_timer_path(board, minutes: minutes), method: :post, class: "btn btn--sm" %>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
+</div>

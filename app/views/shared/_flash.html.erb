@@ -1,0 +1,3 @@
+<% flash.each do |type, message| %>
+  <div class="flash flash--<%= type %>" data-controller="flash" role="status"><%= message %></div>
+<% end %>

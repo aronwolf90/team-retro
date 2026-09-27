@@ -1,0 +1,73 @@
+<%
+  mine = card.authored_by?(current_user_token)
+  lane_hidden = board.lane_hidden?(card.lane)
+  hidden = lane_hidden && !mine
+  my_votes = card.votes_by(current_user_token)
+%>
+<article id="<%= dom_id(card) %>" class="card <%= 'card--hidden' if hidden %> <%= 'card--merged' if card.merged? %>" draggable="true" data-card-id="<%= card.id %>" data-filter-target="card" data-action="dragstart->board#dragstart dragend->board#dragend">
+  <div class="card__body" data-controller="editable toggle" <%= tag.attributes("data-editable-content-value": card.content) unless hidden %>>
+    <div class="card__content" data-editable-target="view">
+      <% if hidden %>
+        <span class="card__blur" aria-label="Hidden card">Hidden until revealed</span>
+      <% else %>
+        <%= simple_format(card.content, { class: "card__text" }) %>
+      <% end %>
+      <% card.children.each do |child| %>
+        <div class="card__child <%= 'card--hidden' if lane_hidden && !child.authored_by?(current_user_token) %>">
+          <% if lane_hidden && !child.authored_by?(current_user_token) %>
+            <span class="card__blur">Hidden until revealed</span>
+          <% else %>
+            <%= simple_format(child.content, { class: "card__text" }) %>
+          <% end %>
+          <div class="card__child-meta">
+            <% unless board.hide_authors || child.author_name.blank? %><span class="muted"><%= child.author_name %></span><% end %>
+            <%= button_to "unmerge", unmerge_card_path(child), method: :post, class: "linkish", title: "Split this card back out" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% unless hidden %>
+      <%= form_with model: card, id: "edit-#{dom_id(card)}", class: "card__edit", html: { hidden: true }, data: { preserve_edits: true, editable_target: "form", controller: "composer", action: "turbo:submit-end->editable#saved" } do |f| %>
+        <%= f.text_area :content, id: nil, rows: 3, class: "input", maxlength: 2000, required: true, data: { action: "keydown->composer#keydown keydown.esc->editable#cancel", composer_target: "input" } %>
+        <div class="new-card__actions">
+          <button type="button" class="btn btn--ghost btn--sm" data-action="editable#cancel">Cancel</button>
+          <%= f.submit "Save", class: "btn btn--primary btn--sm" %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <footer class="card__footer">
+      <% unless board.hide_authors || card.author_name.blank? %>
+        <span class="card__author" title="Written by"><%= card.author_name %></span>
+      <% end %>
+      <span class="card__spacer"></span>
+
+      <span class="vote-group <%= 'vote-group--mine' if my_votes > 0 %>">
+        <% if my_votes > 0 %>
+          <%= button_to "−", card_votes_path(card), method: :delete, class: "vote-btn vote-btn--minus", title: "Remove one of your votes" %>
+        <% end %>
+        <%= button_to card_votes_path(card), method: :post, class: "vote-btn", disabled: votes_left.zero?, title: (votes_left.zero? ? "No votes left" : "Vote for this card") do %>
+          👍 <% unless board.hide_votes %><span class="vote-count"><%= card.votes_count %></span><% end %>
+          <% if my_votes > 0 %><span class="vote-mine" title="Your votes">·you <%= my_votes %></span><% end %>
+        <% end %>
+      </span>
+
+      <button type="button" class="icon-btn comments-toggle" title="Comments" data-action="toggle#toggle" data-toggle-target="button" aria-expanded="false">💬 <%= card.comments.size %></button>
+
+      <% unless hidden %>
+        <button type="button" class="icon-btn" title="Edit card" data-action="editable#edit">✎</button>
+      <% end %>
+      <%= button_to "🗑", card, method: :delete, class: "icon-btn icon-btn--danger", title: "Delete card", form: { data: { turbo_confirm: "Delete this card?" } } %>
+    </footer>
+
+    <div class="comments" id="comments-<%= dom_id(card) %>" data-toggle-target="panel" data-keep-state hidden>
+      <% card.comments.sort_by(&:created_at).each do |comment| %>
+        <%= render "comments/comment", comment: comment, board: board %>
+      <% end %>
+      <%= form_with url: card_comments_path(card), id: "new-comment-#{dom_id(card)}", class: "comment-form", data: { preserve_edits: true, controller: "composer", action: "turbo:submit-end->composer#reset" } do |f| %>
+        <%= f.text_area :body, name: "comment[body]", id: nil, rows: 1, class: "input input--sm", placeholder: "Add a comment…", required: true, maxlength: 2000, data: { action: "keydown->composer#keydown", composer_target: "input" } %>
+      <% end %>
+    </div>
+  </div>
+</article>

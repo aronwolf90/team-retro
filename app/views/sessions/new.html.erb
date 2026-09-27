@@ -1,0 +1,15 @@
+<div class="auth-card">
+  <div class="brand brand--big"><span class="brand__logo">↺</span> Team Retro</div>
+  <p class="muted">One board for one team. Enter the shared team password to join.</p>
+  <%= form_with url: session_path, class: "stack" do |f| %>
+    <label class="field">
+      <span>Your name</span>
+      <%= f.text_field :name, placeholder: "Alex", maxlength: 40, autocomplete: "name", class: "input", autofocus: true %>
+    </label>
+    <label class="field">
+      <span>Team password</span>
+      <%= f.password_field :password, required: true, autocomplete: "current-password", class: "input" %>
+    </label>
+    <%= f.submit "Join the retro", class: "btn btn--primary btn--block" %>
+  <% end %>
+</div>
