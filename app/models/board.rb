@@ -16,7 +16,7 @@ class Board < ApplicationRecord
 
   has_many :cards, dependent: :destroy
   has_many :votes, through: :cards
-  has_many :comments, through: :cards
+  has_many :reactions, through: :cards
 
   validates :name, presence: true, length: { maximum: 120 }
   validates :max_votes, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 99 }
@@ -64,7 +64,7 @@ class Board < ApplicationRecord
   def cards_in(column_key)
     scope = root_cards.where(lane: column_key)
       .select("cards.*, (SELECT COUNT(*) FROM votes WHERE votes.card_id = cards.id) AS votes_count")
-      .includes(:votes, :comments, children: [ :votes, :comments ])
+      .includes(:votes, :reactions, children: [ :votes, :reactions ])
     if sort_by == "votes"
       scope.order(Arel.sql("votes_count DESC"), :position, :created_at)
     else

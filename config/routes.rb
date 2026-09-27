@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       resources :votes, only: %i[create] do
         collection { delete :destroy }
       end
-      resources :comments, only: %i[create destroy]
+      resources :reactions, only: %i[create]
     end
   end
 end

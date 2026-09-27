@@ -37,6 +37,18 @@
       <% end %>
     <% end %>
 
+    <% reactions = card.reactions_by_emoji %>
+    <% if reactions.any? %>
+      <div class="reactions">
+        <% reactions.each do |emoji, list| %>
+          <% mine = list.any? { |r| r.user_token == current_user_token } %>
+          <%= button_to card_reactions_path(card, emoji: emoji), method: :post, class: "reaction #{'reaction--mine' if mine}", title: list.map { |r| r.user_name.presence || "Someone" }.join(", ") do %>
+            <%= emoji %> <span class="reaction__count"><%= list.size %></span>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
     <footer class="card__footer">
       <% if card.author_name.present? %>
         <span class="card__author" title="Written by"><%= card.author_name %></span>
@@ -53,7 +65,14 @@
         <% end %>
       </span>
 
-      <button type="button" class="icon-btn comments-toggle" title="Comments" data-action="toggle#toggle" data-toggle-target="button" aria-expanded="false">💬 <%= card.comments.size %></button>
+      <details class="menu reaction-picker" data-keep-state id="picker-<%= dom_id(card) %>" data-controller="picker" data-action="turbo:submit-end->picker#close">
+        <summary class="icon-btn" title="React with an emoji">😀</summary>
+        <div class="menu__body menu__body--row reaction-picker__body">
+          <% Reaction::EMOJIS.each do |emoji| %>
+            <%= button_to emoji, card_reactions_path(card, emoji: emoji), method: :post, class: "reaction-picker__emoji" %>
+          <% end %>
+        </div>
+      </details>
 
       <% unless hidden %>
         <button type="button" class="icon-btn" title="Edit card" data-action="editable#edit">✎</button>
@@ -61,13 +80,5 @@
       <%= button_to "🗑", card, method: :delete, class: "icon-btn icon-btn--danger", title: "Delete card", form: { data: { turbo_confirm: "Delete this card?" } } %>
     </footer>
 
-    <div class="comments" id="comments-<%= dom_id(card) %>" data-toggle-target="panel" data-keep-state hidden>
-      <% card.comments.sort_by(&:created_at).each do |comment| %>
-        <%= render "comments/comment", comment: comment, board: board %>
-      <% end %>
-      <%= form_with url: card_comments_path(card), id: "new-comment-#{dom_id(card)}", class: "comment-form", data: { preserve_edits: true, controller: "composer", action: "turbo:submit-end->composer#reset" } do |f| %>
-        <%= f.text_area :body, name: "comment[body]", id: nil, rows: 1, class: "input input--sm", placeholder: "Add a comment…", required: true, maxlength: 2000, data: { action: "keydown->composer#keydown", composer_target: "input" } %>
-      <% end %>
-    </div>
   </div>
 </article>

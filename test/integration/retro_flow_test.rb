@@ -25,7 +25,7 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     assert_select "button", text: /Sam/
   end
 
-  test "full retro: cards, votes, comments, move, merge, timer, follow-up board" do
+  test "full retro: cards, votes, reactions, move, merge, timer, follow-up board" do
     login
     post boards_path, params: { board: { name: "Sprint 1", max_votes: 2 } }
     board = Board.last
@@ -50,8 +50,14 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     delete card_votes_path(first)
     assert_equal 1, first.votes.count
 
-    post card_comments_path(first), params: { comment: { body: "Let's keep doing this" } }
-    assert_equal 1, first.comments.count
+    post card_reactions_path(first, emoji: "🎉")
+    post card_reactions_path(first, emoji: "🎉")
+    assert_equal 0, first.reactions.count
+    post card_reactions_path(first, emoji: "❤️")
+    post card_reactions_path(first, emoji: "💩")
+    assert_equal [ "❤️" ], first.reactions.pluck(:emoji)
+    get board_path(board)
+    assert_select ".reaction--mine[title='Sam']", text: /❤️\s*1/
 
     patch move_card_path(third), params: { column: "went_well", position: 0 }, as: :json
     assert_response :no_content

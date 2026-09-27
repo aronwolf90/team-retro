@@ -19,9 +19,9 @@ one team password and picks a display name.
 - **Follow-up**: a new board starts with the previous board's action items copied into *From last retro*.
 - **Cards**: add with Enter, inline edit, delete, author shown on the card.
 - **Drag & drop**: reorder inside a column, move between columns, or drop a card on top of another
-  card to **merge** them (votes and comments follow). Merged cards can be split again.
+  card to **merge** them (votes and reactions follow). Merged cards can be split again.
 - **Voting** with a max number of votes per person (default 6), remove your vote again.
-- **Comments** on every card.
+- **Emoji reactions** on every card; hover a reaction to see who reacted.
 - **Board options**: hide other people's cards per column while brainstorming (eye button in the column header), hide vote counts,
   change max votes, sort by manual order or most votes.
 - **Timer** (1–15 min presets, +1 min, stop) shared with the whole team, beeps when done.

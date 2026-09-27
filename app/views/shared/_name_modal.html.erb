@@ -1,7 +1,7 @@
 <dialog id="name-dialog" class="modal" data-keep-state data-controller="modal" data-modal-open-value="<%= name_missing? %>" <%= "data-modal-required" if name_missing? %>>
   <%= form_with url: profile_path, method: :patch, class: "modal__body", data: { action: "turbo:submit-end->modal#submitted" } do |f| %>
     <h2 class="modal__title">What's your name?</h2>
-    <p class="muted">It is shown on the cards and comments you write, so your team knows who to ask.</p>
+    <p class="muted">It is shown on the cards you write and the reactions you add, so your team knows who to ask.</p>
     <%= f.text_field :name, value: current_user_name, placeholder: "e.g. Alex", required: true, maxlength: 40, autofocus: true, autocomplete: "name", class: "input" %>
     <div class="modal__actions">
       <% unless name_missing? %>

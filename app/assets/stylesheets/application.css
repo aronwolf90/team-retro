@@ -199,13 +199,14 @@ select.input { appearance: auto; }
 .vote-count { font-weight: 700; }
 .vote-mine { font-size: .75rem; color: var(--primary); }
 
-/* Comments */
-.comments-toggle[aria-expanded="true"] { color: var(--primary); background: rgba(91,91,214,.08); }
-.comments { padding: .35rem 0 .3rem; display: flex; flex-direction: column; gap: .5rem; border-top: 1px dashed var(--border); }
-.comments[hidden] { display: none; }
-.comment { background: #f7f7fb; border-radius: 8px; padding: .4rem .6rem; }
-.comment__meta { display: flex; gap: .4rem; align-items: center; font-size: .78rem; }
-.comment__meta .linkish { margin-left: auto; text-decoration: none; font-size: .9rem; }
-.comment__body { margin: .15rem 0 0; font-size: .88rem; color: var(--text); white-space: pre-wrap; }
-.comment-form .input { resize: none; }
-.card[draggable] .comments__body, .card[draggable] .card__edit { cursor: auto; }
+/* Reactions */
+.reactions { display: flex; flex-wrap: wrap; gap: .3rem; }
+.reaction { display: inline-flex; align-items: center; gap: .25rem; padding: .1rem .5rem; border-radius: 999px; border: 1px solid var(--border); background: #f7f7fb; font: inherit; font-size: .85rem; cursor: pointer; color: var(--text); }
+.reaction:hover { border-color: #cfd2dc; background: #eef0f6; }
+.reaction--mine { border-color: var(--primary); background: rgba(91,91,214,.1); }
+.reaction__count { font-size: .78rem; font-weight: 600; color: var(--muted); }
+.reaction-picker { display: inline-block; }
+.reaction-picker__body { left: auto; right: 0; width: 15.5rem; grid-template-columns: repeat(5, 1fr); }
+.reaction-picker__emoji { background: none; border: 0; border-radius: 8px; padding: .3rem; font-size: 1.25rem; line-height: 1; cursor: pointer; }
+.reaction-picker__emoji:hover { background: #f3f4f8; }
+.card[draggable] .card__edit { cursor: auto; }

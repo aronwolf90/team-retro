@@ -3,7 +3,7 @@ class Card < ApplicationRecord
   belongs_to :parent, class_name: "Card", optional: true, counter_cache: false
   has_many :children, class_name: "Card", foreign_key: :parent_id, dependent: :destroy
   has_many :votes, dependent: :destroy
-  has_many :comments, dependent: :destroy
+  has_many :reactions, dependent: :destroy
 
   enum :lane, { went_well: 0, to_improve: 1, action_items: 2, how_is_everyone: 3, last_time: 4 }
 
@@ -25,18 +25,27 @@ class Card < ApplicationRecord
     votes.count { |v| v.voter_token == voter_token }
   end
 
+  def reactions_by_emoji
+    grouped = reactions.group_by(&:emoji)
+    Reaction::EMOJIS.filter_map { |emoji| [ emoji, grouped[emoji] ] if grouped[emoji] }
+  end
+
   def authored_by?(token)
     author_token.present? && author_token == token
   end
 
-  # Merge +other+ (and any of its children) into this card. Votes and comments
-  # follow so nothing gets lost.
   def merge!(other)
     return if other == self || other.parent_id == id
     transaction do
       other.children.update_all(parent_id: id)
       other.votes.update_all(card_id: id)
-      other.comments.update_all(card_id: id)
+      other.reactions.each do |reaction|
+        if reactions.exists?(emoji: reaction.emoji, user_token: reaction.user_token)
+          reaction.destroy
+        else
+          reaction.update!(card: self)
+        end
+      end
       other.update!(parent: self, lane: lane, position: 0)
     end
   end

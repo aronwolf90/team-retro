@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_27_235209) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_27_235729) do
   create_table "boards", force: :cascade do |t|
     t.string "name", null: false
     t.integer "max_votes", default: 6, null: false
@@ -37,14 +37,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_235209) do
     t.index ["parent_id"], name: "index_cards_on_parent_id"
   end
 
-  create_table "comments", force: :cascade do |t|
+  create_table "reactions", force: :cascade do |t|
     t.integer "card_id", null: false
-    t.text "body", null: false
-    t.string "author_name"
-    t.string "author_token"
+    t.string "emoji", null: false
+    t.string "user_name"
+    t.string "user_token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["card_id"], name: "index_comments_on_card_id"
+    t.index ["card_id", "emoji", "user_token"], name: "index_reactions_on_card_id_and_emoji_and_user_token", unique: true
+    t.index ["card_id"], name: "index_reactions_on_card_id"
   end
 
   create_table "votes", force: :cascade do |t|
@@ -58,6 +59,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_235209) do
 
   add_foreign_key "cards", "boards"
   add_foreign_key "cards", "cards", column: "parent_id"
-  add_foreign_key "comments", "cards"
+  add_foreign_key "reactions", "cards"
   add_foreign_key "votes", "cards"
 end

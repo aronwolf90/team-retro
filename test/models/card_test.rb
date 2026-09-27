@@ -23,15 +23,17 @@ class CardTest < ActiveSupport::TestCase
     assert_equal %w[C B], @board.cards_in(:went_well).map(&:content)
   end
 
-  test "merge! moves votes and comments to the parent and unmerge! splits again" do
+  test "merge! moves votes and reactions to the parent and unmerge! splits again" do
     @b.votes.create!(voter_token: "v1")
-    @b.comments.create!(body: "hi", author_name: "x")
+    @b.reactions.create!(emoji: "🎉", user_token: "t1")
+    @b.reactions.create!(emoji: "🔥", user_token: "t2")
+    @a.reactions.create!(emoji: "🎉", user_token: "t1")
     @a.merge!(@b)
 
     @a.reload
     assert_equal [ @b ], @a.children.to_a
     assert_equal 1, @a.votes.count
-    assert_equal 1, @a.comments.count
+    assert_equal [ [ "🎉", 1 ], [ "🔥", 1 ] ], @a.reactions_by_emoji.map { |emoji, list| [ emoji, list.size ] }
     assert_equal %w[A], @board.cards_in(:went_well).map(&:content)
 
     @b.reload.unmerge!

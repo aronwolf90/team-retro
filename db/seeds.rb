@@ -11,5 +11,5 @@ if board.cards.none?
   board.cards.create!(lane: :to_improve, content: "CI pipeline is flaky", author_name: "Kim")
   board.cards.create!(lane: :action_items, content: "Kim: investigate flaky specs by Friday", author_name: "Sam")
   went_well.votes.create!([ { voter_token: "seed-1" }, { voter_token: "seed-2" } ])
-  went_well.comments.create!(body: "Let's keep this up next sprint!", author_name: "Kim")
+  went_well.reactions.create!([ { emoji: "🎉", user_name: "Kim", user_token: "seed-1" }, { emoji: "🎉", user_name: "Sam", user_token: "seed-2" }, { emoji: "❤️", user_name: "Kim", user_token: "seed-1" } ])
 end
