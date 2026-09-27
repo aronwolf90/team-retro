@@ -36,8 +36,14 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Trust the server host key
-        run: ssh-keyscan -H 62.238.15.241 >> ~/.ssh/known_hosts
+      - name: Trust the server host keys
+        run: |
+          mkdir -p ~/.ssh
+          sed 's/^ *//' >> ~/.ssh/known_hosts <<'KEYS'
+            62.238.15.241 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOy1XPZmZVYnBdlWisyZolb0nd1FOpiOfpckOI/7HouBo57Yrddcrn1JKd2IdCwuFiDP363PZKZ/n5rG8IyAXM4=
+            62.238.15.241 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEH5Drsiz7uglhKQHlNnctrRYTDKBheF996rmMjMWWhK
+            62.238.15.241 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC7Qv75/UZx2Pt/ibEgZtZiraBdx5LHtbTeqYnmQmKsMlVHwk00veCOeBLZEbJEQ+OsB115WjlD2N1Ezmxodn1MRHA2yWw4I6+xn3zPYJGnzxv84fF9KC+Re8G7RIY1sChGJgM4tZbktrgd15DYN8sHcVXwvV453vkUnXJCjGHgAmNBFlz8EQksS1J4Tj0SOGboDidk/HEx5+L5ufHVkSZB8NhSw6feBe1hPdb5fJHcVJMYSAjtGDoiwkhYfy8K7eeTtubl5qPQ4b63CWpAxxGKo6lJlfyB3pkzzkcsnkpHxBSe0N+OrpNYM6oaHkkGYkdvfqPk1G8b46CmaWQeNDOh6Zj3hwj3nyKQMvd8GV30VV6Oc+fJXobHrZNkmuLekl/EXh2dOk6TCT6cvabhIM2h7LPnzPLrPzcUM/Z6y9ZIyuTHREoNPhemuiLTYe09LudstkR3B7G21NNY9D0Y3AWgFZNnrAN/piYB/ImvCfutcZWlbSlJsB4L7WnSnIR1qhc=
+          KEYS
 
       - name: Write Rails master key
         run: echo "${{ secrets.RAILS_MASTER_KEY }}" > config/master.key
