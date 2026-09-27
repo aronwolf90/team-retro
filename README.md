@@ -1,8 +1,9 @@
 # Team Retro
 
 A small, self-hosted clone of the default [EasyRetro](https://easyretro.io) board for **one team**.
-Built with Rails 8, Hotwire (Turbo + Stimulus) and SQLite. No accounts: everybody shares one
-team password and picks a display name.
+Built with Rails 8, Hotwire (Turbo + Stimulus) and SQLite on top of the stock `rails new`
+skeleton (Kamal, Thruster, RuboCop, Brakeman, GitHub Actions CI). No accounts: everybody shares
+one team password and picks a display name.
 
 ## Features
 
@@ -31,13 +32,13 @@ bin/rails server
 
 Open http://localhost:3000, log in with password `retro`, enter your name.
 
-Run the tests with `bin/rails test`.
+Run the tests with `bin/rails test`, or the whole CI pipeline (style, security, tests) with `bin/ci`.
 
 ## Docker
 
 ```bash
 docker build -t team-retro .
-docker run -d -p 3000:3000 \
+docker run -d -p 80:80 \
   -e TEAM_PASSWORD=change-me \
   -e SECRET_KEY_BASE=$(openssl rand -hex 64) \
   -e FORCE_SSL=false \
@@ -45,8 +46,18 @@ docker run -d -p 3000:3000 \
   --name team-retro team-retro
 ```
 
-The container prepares the SQLite databases on start. Leave out `FORCE_SSL=false` when
-running behind an HTTPS reverse proxy.
+The image runs Puma behind [Thruster](https://github.com/basecamp/thruster) on port 80 and
+prepares the SQLite databases on start. Leave out `FORCE_SSL=false` when running behind an
+HTTPS reverse proxy.
+
+## Deploying with Kamal
+
+The app ships with the standard Rails [Kamal](https://kamal-deploy.org) setup:
+
+1. Edit `config/deploy.yml`: set your server IP, the registry user / image name and the `proxy.host` domain.
+2. Provide the secrets Kamal injects (see `.kamal/secrets`): `KAMAL_REGISTRY_PASSWORD`,
+   `RAILS_MASTER_KEY` (from `config/master.key`) and `TEAM_PASSWORD`.
+3. `bin/kamal setup` for the first deploy, `bin/kamal deploy` afterwards.
 
 ## Production notes
 
