@@ -14,7 +14,7 @@ one team password and picks a display name.
 
 - **Login with one team password** (`TEAM_PASSWORD`, defaults to `retro` in development).
 - **Name modal** pops up when the session has no name yet; click your name in the header to change it.
-- **Dashboard** of all boards with card counts, create / delete boards, CSV export.
+- **Dashboard** of all boards with card counts, create / delete boards.
 - **Board**: *How is everyone?* · *From last retro* · *Went Well* · *To Improve* · *Action Items* (columns are fixed).
 - **Follow-up**: a new board starts with the previous board's action items copied into *From last retro*.
 - **Cards**: add with Enter, inline edit, delete, author shown on the card.

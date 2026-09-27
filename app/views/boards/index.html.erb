@@ -27,7 +27,6 @@
             <% end %>
           <% end %>
           <div class="board-item__actions">
-            <%= link_to "Export CSV", export_board_path(board), class: "btn btn--ghost btn--sm", data: { turbo: false } %>
             <%= button_to "Delete", board, method: :delete, class: "btn btn--danger btn--sm", form: { data: { turbo_confirm: "Delete “#{board.name}” and all its cards?" } } %>
           </div>
         </li>

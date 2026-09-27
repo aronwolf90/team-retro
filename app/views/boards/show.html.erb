@@ -43,7 +43,6 @@
           <% end %>
           <hr>
           <%= link_to "✎ Edit name & context", edit_board_path(@board), class: "menu__item" %>
-          <%= link_to "⤓ Export CSV", export_board_path(@board), class: "menu__item", data: { turbo: false } %>
           <%= button_to "🗑 Delete board", @board, method: :delete, class: "menu__item menu__item--danger", form: { data: { turbo_confirm: "Delete this board and all its cards?" } } %>
         </div>
       </details>

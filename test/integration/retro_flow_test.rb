@@ -25,7 +25,7 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     assert_select "button", text: /Sam/
   end
 
-  test "full retro: cards, votes, comments, move, merge, timer, export" do
+  test "full retro: cards, votes, comments, move, merge, timer, follow-up board" do
     login
     post boards_path, params: { board: { name: "Sprint 1", max_votes: 2 } }
     board = Board.last
@@ -84,11 +84,6 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     assert_match "1 action item from “Sprint 1”", flash[:notice]
     assert_equal [ "Kim: investigate flaky specs" ], Board.last.cards_in(:last_time).map(&:content)
     Board.last.destroy
-
-    get export_board_path(board)
-    assert_response :success
-    assert_match "Went Well,Shipped it,1,Sam,Good pairing", response.body
-    assert_match "How is everyone?,Tired but fine", response.body
 
     delete board_path(board)
     assert_equal 0, Board.count

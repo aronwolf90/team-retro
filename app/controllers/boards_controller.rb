@@ -1,7 +1,5 @@
-require "csv"
-
 class BoardsController < ApplicationController
-  before_action :set_board, only: %i[show edit update destroy export toggle_hidden]
+  before_action :set_board, only: %i[show edit update destroy toggle_hidden]
 
   def index
     @boards = Board.left_joins(:cards).group("boards.id")
@@ -51,26 +49,6 @@ class BoardsController < ApplicationController
   def destroy
     @board.destroy
     redirect_to boards_path, notice: "Board deleted.", status: :see_other
-  end
-
-  def export
-    csv = CSV.generate do |rows|
-      rows << [ "Column", "Card", "Votes", "Author", "Merged cards", "Comments", "Created at" ]
-      Board::COLUMNS.each do |column|
-        @board.cards_in(column[:key]).each do |card|
-          rows << [
-            column[:title],
-            card.content,
-            card.votes_count,
-            card.author_name,
-            card.children.map(&:content).join(" | "),
-            card.comments.map { |c| "#{c.author_name}: #{c.body}" }.join(" | "),
-            card.created_at.iso8601
-          ]
-        end
-      end
-    end
-    send_data csv, filename: "#{@board.name.parameterize}-#{Date.current}.csv", type: "text/csv"
   end
 
   private
