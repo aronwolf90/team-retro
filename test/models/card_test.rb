@@ -57,4 +57,17 @@ class CardTest < ActiveSupport::TestCase
     assert_equal 0, @board.votes_left_for("v1")
     assert_equal 3, @board.votes_left_for("v2")
   end
+
+  test "a new board imports the previous board's action items, merged cards flattened" do
+    todo = @board.cards.create!(lane: :action_items, content: "Fix CI", author_name: "Kim")
+    todo.merge!(@board.cards.create!(lane: :action_items, content: "Also flaky specs"))
+    @board.cards.create!(lane: :action_items, content: "Write docs")
+
+    next_board = Board.create!(name: "Next")
+    assert_equal @board, next_board.previous
+    assert_equal 2, next_board.import_action_items_from(next_board.previous)
+    assert_equal [ "Fix CI\n\nAlso flaky specs", "Write docs" ], next_board.cards_in(:last_time).map(&:content)
+    assert_equal "Kim", next_board.cards_in(:last_time).first.author_name
+    assert_equal 0, Board.create!(name: "Lonely").import_action_items_from(nil)
+  end
 end

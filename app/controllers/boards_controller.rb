@@ -21,7 +21,11 @@ class BoardsController < ApplicationController
   def create
     @board = Board.new(board_params)
     if @board.save
-      redirect_to @board, notice: "Board created. Share the link with your team!"
+      previous = @board.previous
+      imported = @board.import_action_items_from(previous)
+      notice = "Board created. Share the link with your team!"
+      notice = "Board created with #{imported} action #{'item'.pluralize(imported)} from “#{previous.name}”." if imported > 0
+      redirect_to @board, notice: notice
     else
       render :new, status: :unprocessable_entity
     end

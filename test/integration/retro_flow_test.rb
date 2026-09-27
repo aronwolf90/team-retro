@@ -35,6 +35,7 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     post board_cards_path(board), params: { card: { lane: "went_well", content: "Good pairing" } }
     post board_cards_path(board), params: { card: { lane: "to_improve", content: "Flaky CI" } }
     post board_cards_path(board), params: { card: { lane: "how_is_everyone", content: "Tired but fine" } }
+    post board_cards_path(board), params: { card: { lane: "action_items", content: "Kim: investigate flaky specs" } }
     first, second, third = board.cards.order(:id).first(3)
     assert_equal "Sam", first.author_name
 
@@ -77,6 +78,12 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     assert_equal %w[went_well], board.reload.hidden_lanes
     patch toggle_hidden_board_path(board, lane: "bogus")
     assert_equal %w[went_well], board.reload.hidden_lanes
+
+    post boards_path, params: { board: { name: "Sprint 2" } }
+    follow_redirect!
+    assert_match "1 action item from “Sprint 1”", flash[:notice]
+    assert_equal [ "Kim: investigate flaky specs" ], Board.last.cards_in(:last_time).map(&:content)
+    Board.last.destroy
 
     get export_board_path(board)
     assert_response :success

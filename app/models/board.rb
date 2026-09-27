@@ -2,6 +2,7 @@ class Board < ApplicationRecord
   # The default EasyRetro-style kanban board: the three columns are fixed.
   COLUMNS = [
     { key: :how_is_everyone, title: "How is everyone?", color: "blue" },
+    { key: :last_time, title: "From last retro", color: "orange" },
     { key: :went_well,    title: "Went Well",    color: "green"  },
     { key: :to_improve,   title: "To Improve",   color: "red"    },
     { key: :action_items, title: "Action Items", color: "purple" }
@@ -22,6 +23,21 @@ class Board < ApplicationRecord
   validates :sort_by, inclusion: { in: SORT_OPTIONS }
 
   broadcasts_refreshes
+
+  def previous
+    Board.where.not(id: id).where(created_at: ...created_at).order(created_at: :desc).first
+  end
+
+  def import_action_items_from(source)
+    return 0 unless source
+    imported = 0
+    source.cards_in(:action_items).each do |card|
+      lines = [ card.content, *card.children.map(&:content) ]
+      cards.create!(lane: :last_time, content: lines.join("\n\n"), author_name: card.author_name)
+      imported += 1
+    end
+    imported
+  end
 
   def hidden_lanes=(value)
     super(Array(value).map(&:to_s).select { |lane| LANE_KEYS.include?(lane) }.uniq)
