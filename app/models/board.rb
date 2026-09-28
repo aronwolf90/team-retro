@@ -39,6 +39,10 @@ class Board < ApplicationRecord
     imported
   end
 
+  def hidden_lanes
+    super || []
+  end
+
   def hidden_lanes=(value)
     super(Array(value).map(&:to_s).select { |lane| LANE_KEYS.include?(lane) }.uniq)
   end

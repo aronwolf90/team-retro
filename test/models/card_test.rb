@@ -72,4 +72,12 @@ class CardTest < ActiveSupport::TestCase
     assert_equal "Kim", next_board.cards_in(:last_time).first.author_name
     assert_equal 0, Board.create!(name: "Lonely").import_action_items_from(nil)
   end
+
+  test "hidden lanes tolerate a missing value" do
+    @board.update_column(:hidden_lanes, nil)
+    assert_equal [], @board.reload.hidden_lanes
+    assert_not @board.lane_hidden?(:went_well)
+    @board.toggle_lane_hidden!(:went_well)
+    assert @board.reload.lane_hidden?(:went_well)
+  end
 end
