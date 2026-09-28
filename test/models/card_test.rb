@@ -74,8 +74,8 @@ class CardTest < ActiveSupport::TestCase
   end
 
   test "hidden lanes tolerate a missing value" do
-    @board.update_column(:hidden_lanes, nil)
-    assert_equal [], @board.reload.hidden_lanes
+    @board[:hidden_lanes] = nil
+    assert_equal [], @board.hidden_lanes
     assert_not @board.lane_hidden?(:went_well)
     @board.toggle_lane_hidden!(:went_well)
     assert @board.reload.lane_hidden?(:went_well)
