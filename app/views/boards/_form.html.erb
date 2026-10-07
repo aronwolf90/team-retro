@@ -11,6 +11,16 @@
     <%= f.number_field :max_votes, class: "input input--sm", min: 0, max: 99 %>
   </label>
   <fieldset class="field">
+    <legend>Columns</legend>
+    <% Board::COLUMNS.each do |column| %>
+      <% if column[:key] == :icebreaker %>
+        <label class="check"><%= f.check_box :icebreaker %> <%= column[:title] %> <span class="muted">(optional)</span></label>
+      <% else %>
+        <label class="check check--fixed"><input type="checkbox" checked disabled> <%= column[:title] %></label>
+      <% end %>
+    <% end %>
+  </fieldset>
+  <fieldset class="field">
     <legend>Board options</legend>
     <span class="muted">Hide cards written by others (per column, reveal after brainstorming):</span>
     <%= f.hidden_field :hidden_lanes, multiple: true, value: "", id: nil %>
@@ -19,10 +29,6 @@
     <% end %>
     <label class="check"><%= f.check_box :hide_votes %> Hide vote counts</label>
   </fieldset>
-  <label class="field field--inline">
-    <span>Columns</span>
-    <span class="muted"><%= Board::COLUMNS.map { |c| c[:title] }.join(" · ") %></span>
-  </label>
   <div class="form-actions">
     <%= link_to "Cancel", board.persisted? ? board : boards_path, class: "btn btn--ghost" %>
     <%= f.submit board.persisted? ? "Save settings" : "Create board", class: "btn btn--primary" %>

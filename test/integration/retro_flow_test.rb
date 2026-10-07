@@ -86,13 +86,33 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     assert_equal %w[went_well], board.reload.hidden_lanes
 
     post boards_path, params: { board: { name: "Sprint 2" } }
+    next_board = Board.last
+    assert_empty next_board.cards
+    get board_path(next_board)
+    assert_select "#import-menu select option", text: /Sprint 1/
+    post import_action_items_board_path(next_board), params: { source_board_id: board.id }
     follow_redirect!
-    assert_match "1 action item from “Sprint 1”", flash[:notice]
-    assert_equal [ "Kim: investigate flaky specs" ], Board.last.cards_in(:last_time).map(&:content)
-    Board.last.destroy
+    assert_match "Imported 1 action item from “Sprint 1”", flash[:notice]
+    assert_equal [ "Kim: investigate flaky specs" ], next_board.cards_in(:last_time).map(&:content)
+    post import_action_items_board_path(next_board), params: { source_board_id: next_board.id }
+    assert_response :not_found
+    next_board.destroy
 
     delete board_path(board)
     assert_equal 0, Board.count
+  end
+
+  test "the icebreaker column is optional per board" do
+    login
+    post boards_path, params: { board: { name: "Retro" } }
+    board = Board.last
+    get board_path(board)
+    assert_select "[data-column=icebreaker]", count: 0
+
+    patch board_path(board), params: { board: { icebreaker: "1" } }
+    post board_cards_path(board), params: { card: { lane: "icebreaker", content: "Favourite snack?" } }
+    get board_path(board)
+    assert_select "section[data-column=icebreaker] .card__text", text: "Favourite snack?"
   end
 
   test "hidden columns blur other people's cards but not your own or other columns" do

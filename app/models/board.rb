@@ -1,6 +1,7 @@
 class Board < ApplicationRecord
   # The default EasyRetro-style kanban board: the three columns are fixed.
   COLUMNS = [
+    { key: :icebreaker, title: "Icebreaker", color: "teal" },
     { key: :how_is_everyone, title: "How is everyone?", color: "blue" },
     { key: :last_time, title: "From last retro", color: "orange" },
     { key: :went_well,    title: "Went Well",    color: "green"  },
@@ -24,8 +25,12 @@ class Board < ApplicationRecord
 
   broadcasts_refreshes
 
-  def previous
-    Board.where.not(id: id).where(created_at: ...created_at).order(created_at: :desc).first
+  def columns
+    COLUMNS.select { |column| column[:key] != :icebreaker || icebreaker? }
+  end
+
+  def import_sources
+    Board.where.not(id: id).order(created_at: :desc)
   end
 
   def import_action_items_from(source)

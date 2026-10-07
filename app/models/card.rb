@@ -5,7 +5,7 @@ class Card < ApplicationRecord
   has_many :votes, dependent: :destroy
   has_many :reactions, dependent: :destroy
 
-  enum :lane, { went_well: 0, to_improve: 1, action_items: 2, how_is_everyone: 3, last_time: 4 }
+  enum :lane, { went_well: 0, to_improve: 1, action_items: 2, how_is_everyone: 3, last_time: 4, icebreaker: 5 }
 
   validates :content, presence: true, length: { maximum: 2000 }
 

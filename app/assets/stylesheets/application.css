@@ -72,6 +72,7 @@ select.input { appearance: auto; }
 .field--inline { flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem; }
 .field legend { font-weight: 600; padding: 0; margin-bottom: .3rem; }
 .check { display: flex; align-items: center; gap: .5rem; font-weight: 500; font-size: .9rem; cursor: pointer; padding: .2rem 0; }
+.check--fixed { color: var(--muted); cursor: default; }
 .stack { display: flex; flex-direction: column; gap: 1rem; }
 .form-actions { display: flex; justify-content: flex-end; gap: .5rem; }
 .inline-form { display: inline; }
@@ -152,6 +153,7 @@ select.input { appearance: auto; }
 .column--hidden .column__header h2 { opacity: .8; }
 .menu__label { font-size: .8rem; color: var(--muted); padding: .2rem .1rem 0; }
 .column__count { font-size: .8rem; color: var(--muted); background: var(--surface); border-radius: 999px; padding: .1rem .5rem; }
+.column--teal { --col: #14b8a6; }
 .column--blue { --col: #3b82f6; }
 .column--orange { --col: #f59e0b; }
 .column--green { --col: var(--green); }
@@ -160,6 +162,7 @@ select.input { appearance: auto; }
 .column__cards { display: flex; flex-direction: column; gap: .6rem; min-height: 2.5rem; flex: 1; }
 
 .add-card__trigger { width: 100%; text-align: left; background: none; border: 0; border-radius: 8px; padding: .5rem .6rem; font: inherit; font-size: .9rem; font-weight: 600; color: var(--muted); cursor: pointer; }
+.import-menu .menu__body { left: 0; right: 0; min-width: 0; }
 .add-card__trigger:hover { background: rgba(0,0,0,.05); color: var(--text); }
 .new-card { background: var(--surface); border-radius: 10px; padding: .5rem; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: .4rem; border-left: 4px solid var(--col); }
 .new-card[hidden] { display: none; }

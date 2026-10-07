@@ -1,5 +1,5 @@
 class BoardsController < ApplicationController
-  before_action :set_board, only: %i[show edit update destroy toggle_hidden]
+  before_action :set_board, only: %i[show edit update destroy toggle_hidden import_action_items]
 
   def index
     @boards = Board.left_joins(:cards).group("boards.id")
@@ -8,7 +8,7 @@ class BoardsController < ApplicationController
   end
 
   def show
-    @columns = Board::COLUMNS.map { |column| [ column, @board.cards_in(column[:key]) ] }
+    @columns = @board.columns.map { |column| [ column, @board.cards_in(column[:key]) ] }
     @votes_left = @board.votes_left_for(current_user_token)
   end
 
@@ -19,11 +19,7 @@ class BoardsController < ApplicationController
   def create
     @board = Board.new(board_params)
     if @board.save
-      previous = @board.previous
-      imported = @board.import_action_items_from(previous)
-      notice = "Board created. Share the link with your team!"
-      notice = "Board created with #{imported} action #{'item'.pluralize(imported)} from “#{previous.name}”." if imported > 0
-      redirect_to @board, notice: notice
+      redirect_to @board, notice: "Board created. Share the link with your team!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -46,6 +42,12 @@ class BoardsController < ApplicationController
     redirect_to @board, status: :see_other
   end
 
+  def import_action_items
+    source = @board.import_sources.find(params[:source_board_id])
+    imported = @board.import_action_items_from(source)
+    redirect_to @board, notice: "Imported #{imported} action #{'item'.pluralize(imported)} from “#{source.name}”.", status: :see_other
+  end
+
   def destroy
     @board.destroy
     redirect_to boards_path, notice: "Board deleted.", status: :see_other
@@ -58,6 +60,6 @@ class BoardsController < ApplicationController
   end
 
   def board_params
-    params.require(:board).permit(:name, :max_votes, :hide_votes, :sort_by, hidden_lanes: [])
+    params.require(:board).permit(:name, :max_votes, :hide_votes, :icebreaker, :sort_by, hidden_lanes: [])
   end
 end

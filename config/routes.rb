@@ -7,7 +7,10 @@ Rails.application.routes.draw do
   resource :profile, only: %i[update]
 
   resources :boards do
-    member { patch :toggle_hidden }
+    member do
+      patch :toggle_hidden
+      post :import_action_items
+    end
     resource :timer, only: %i[create update destroy], controller: "timers"
 
     resources :cards, only: %i[create update destroy], shallow: true do

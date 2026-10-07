@@ -29,10 +29,11 @@
           <%= form_with model: @board, data: { controller: "autosubmit" } do |f| %>
             <span class="menu__label">Hide cards from others in…</span>
             <%= f.hidden_field :hidden_lanes, multiple: true, value: "", id: nil %>
-            <% Board::COLUMNS.each do |column| %>
+            <% @board.columns.each do |column| %>
               <label class="check"><%= f.check_box :hidden_lanes, { multiple: true, checked: @board.lane_hidden?(column[:key]), id: "board_hidden_lanes_#{column[:key]}", data: { action: "autosubmit#submit" } }, column[:key], nil %> <%= column[:title] %></label>
             <% end %>
             <hr>
+            <label class="check"><%= f.check_box :icebreaker, data: { action: "autosubmit#submit" } %> Icebreaker column</label>
             <label class="check"><%= f.check_box :hide_votes, data: { action: "autosubmit#submit" } %> Hide vote counts</label>
             <label class="check">Max votes <%= f.number_field :max_votes, min: 0, max: 99, class: "input input--xs", data: { action: "change->autosubmit#submit" } %></label>
           <% end %>
@@ -46,7 +47,7 @@
 
   <% if @board.any_lane_hidden? %>
     <p class="banner">🙈 Cards from other people are hidden in
-      <strong><%= Board::COLUMNS.select { |c| @board.lane_hidden?(c[:key]) }.map { |c| c[:title] }.to_sentence %></strong>
+      <strong><%= @board.columns.select { |c| @board.lane_hidden?(c[:key]) }.map { |c| c[:title] }.to_sentence %></strong>
       while everyone brainstorms. Use the eye button in a column header to reveal them.</p>
   <% end %>
 

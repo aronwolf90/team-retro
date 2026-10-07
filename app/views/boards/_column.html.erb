@@ -23,6 +23,18 @@
       </div>
     <% end %>
   </div>
+  <% if column[:key] == :last_time && (sources = board.import_sources).any? %>
+    <details class="menu import-menu" data-keep-state id="import-menu" data-controller="picker" data-action="turbo:submit-end->picker#close">
+      <summary class="add-card__trigger">⇣ Import action items</summary>
+      <div class="menu__body">
+        <%= form_with url: import_action_items_board_path(board), class: "stack" do |f| %>
+          <span class="menu__label">Copy the action items of…</span>
+          <%= f.select :source_board_id, sources.map { |b| [ "#{b.name} (#{b.created_at.strftime('%b %-d, %Y')})", b.id ] }, {}, class: "input input--sm", "aria-label": "Board to import from" %>
+          <%= f.submit "Import", class: "btn btn--primary btn--sm" %>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
   <div class="column__cards" data-board-target="list" data-column="<%= column[:key] %>" data-action="dragover->board#dragover drop->board#drop dragleave->board#dragleave">
     <% cards.each do |card| %>
       <%= render "cards/card", card: card, board: board, votes_left: votes_left %>
