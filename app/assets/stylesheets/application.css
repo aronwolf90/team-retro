@@ -162,7 +162,10 @@ select.input { appearance: auto; }
 .column__cards { display: flex; flex-direction: column; gap: .6rem; min-height: 2.5rem; flex: 1; }
 
 .add-card__trigger { width: 100%; text-align: left; background: none; border: 0; border-radius: 8px; padding: .5rem .6rem; font: inherit; font-size: .9rem; font-weight: 600; color: var(--muted); cursor: pointer; }
-.import-menu .menu__body { left: 0; right: 0; min-width: 0; }
+.add-card__row { display: flex; align-items: center; gap: .25rem; }
+.add-card__row[hidden] { display: none; }
+.add-card__row > .add-card__trigger { flex: 1; }
+.add-card__import { width: auto; white-space: nowrap; list-style: none; }
 .add-card__trigger:hover { background: rgba(0,0,0,.05); color: var(--text); }
 .new-card { background: var(--surface); border-radius: 10px; padding: .5rem; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: .4rem; border-left: 4px solid var(--col); }
 .new-card[hidden] { display: none; }
