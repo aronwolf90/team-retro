@@ -11,7 +11,7 @@ class Board < ApplicationRecord
 
   OPTIONAL_COLUMNS = %i[icebreaker how_is_everyone].freeze
   IMPORTABLE_LANES = %i[action_items last_time].freeze
-  SORT_OPTIONS = %w[order votes].freeze
+  SORT_OPTIONS = %w[order votes author].freeze
   LANE_KEYS = COLUMNS.map { |c| c[:key].to_s }.freeze
 
   # Columns whose cards are hidden from everyone except their author.
@@ -82,8 +82,12 @@ class Board < ApplicationRecord
     scope = root_cards.where(lane: column_key)
       .select("cards.*, (SELECT COUNT(*) FROM votes WHERE votes.card_id = cards.id) AS votes_count")
       .includes(:votes, :reactions, children: [ :votes, :reactions ])
-    if sort_by == "votes"
+    case sort_by
+    when "votes"
       scope.order(Arel.sql("votes_count DESC"), :position, :created_at)
+    when "author"
+      scope.select("MIN(cards.position) OVER (PARTITION BY LOWER(COALESCE(cards.author_name, ''))) AS author_first_position")
+        .order(Arel.sql("COALESCE(cards.author_name, '') = ''"), Arel.sql("author_first_position"), Arel.sql("LOWER(cards.author_name)"), :position, :created_at)
     else
       scope.order(:position, :created_at)
     end

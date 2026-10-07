@@ -20,7 +20,7 @@
 
 
       <%= form_with model: @board, class: "inline-form", data: { controller: "autosubmit" } do |f| %>
-        <%= f.select :sort_by, [ [ "Sort: manual order", "order" ], [ "Sort: most votes", "votes" ] ], {}, class: "input input--sm", data: { action: "change->autosubmit#submit" }, "aria-label": "Sort cards" %>
+        <%= f.select :sort_by, [ [ "Sort: manual order", "order" ], [ "Sort: most votes", "votes" ], [ "Sort: by author", "author" ] ], {}, class: "input input--sm", data: { action: "change->autosubmit#submit" }, "aria-label": "Sort cards" %>
       <% end %>
 
       <details class="menu" data-keep-state id="board-menu">

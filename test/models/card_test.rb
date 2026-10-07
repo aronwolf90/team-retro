@@ -54,6 +54,21 @@ class CardTest < ActiveSupport::TestCase
     assert_equal [ 2, 0 ], @board.cards_in(:went_well).map(&:votes_count)
   end
 
+  test "board groups cards by author, ordered by each author's first card in manual order" do
+    @board.update!(sort_by: "author")
+    bob_first = @board.cards.create!(lane: :went_well, content: "Bob first", author_name: "bob")
+    @board.cards.create!(lane: :went_well, content: "Anonymous", author_name: nil)
+    @board.cards.create!(lane: :went_well, content: "Alice", author_name: "Alice")
+    @board.cards.create!(lane: :went_well, content: "Bob second", author_name: "Bob")
+    assert_equal [ "Bob first", "Bob second", "Alice", "A", "B", "Anonymous" ], @board.cards_in(:went_well).map(&:content)
+
+    bob_first.move_to!(:went_well, 99)
+    assert_equal [ "Alice", "Bob second", "Bob first", "A", "B", "Anonymous" ], @board.cards_in(:went_well).map(&:content)
+
+    @board.cards.find_by!(content: "Alice").move_to!(:went_well, 99)
+    assert_equal [ "Bob second", "Bob first", "Alice", "A", "B", "Anonymous" ], @board.cards_in(:went_well).map(&:content)
+  end
+
   test "votes_left_for respects max votes" do
     3.times { @a.votes.create!(voter_token: "v1") }
     assert_equal 0, @board.votes_left_for("v1")
