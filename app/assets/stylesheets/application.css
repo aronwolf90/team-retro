@@ -141,18 +141,19 @@ select.input { appearance: auto; }
 
 /* Columns */
 .columns { display: flex; gap: 1rem; align-items: flex-start; overflow-x: auto; padding-bottom: .75rem; scroll-snap-type: x proximity; }
-.column { flex: 1 1 0; min-width: 230px; scroll-snap-align: start; }
+.column { flex: 1 1 0; min-width: 240px; scroll-snap-align: start; }
 @media (max-width: 640px) { .columns { flex-direction: column; overflow-x: visible; } .column { min-width: 0; width: 100%; } }
 .column { background: #eaecf2; border-radius: 12px; padding: .75rem; min-height: 60vh; display: flex; flex-direction: column; gap: .6rem; }
-.column__header { display: flex; align-items: center; justify-content: space-between; padding: 0 .25rem; }
-.column__header h2 { font-size: 1rem; display: flex; align-items: center; gap: .5rem; }
-.column__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--col); }
-.column__header-right { display: inline-flex; align-items: center; gap: .25rem; }
-.column__eye { font-size: .95rem; padding: .1rem .35rem; }
+.column__header { display: flex; align-items: center; justify-content: space-between; gap: .25rem; padding: 0 .25rem; }
+.column__header h2 { font-size: 1rem; display: flex; align-items: center; gap: .4rem; min-width: 0; white-space: nowrap; }
+.column__title { overflow: hidden; text-overflow: ellipsis; }
+.column__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--col); flex-shrink: 0; }
+.column__header-right { display: inline-flex; align-items: center; gap: .1rem; flex-shrink: 0; }
+.column__count { font-size: .8rem; color: var(--muted); background: var(--surface); border-radius: 999px; padding: .1rem .45rem; }
+.column__eye { font-size: .95rem; padding: .1rem .2rem; }
 .column__eye--hidden { background: #fef9c3; }
 .column--hidden .column__header h2 { opacity: .8; }
 .menu__label { font-size: .8rem; color: var(--muted); padding: .2rem .1rem 0; }
-.column__count { font-size: .8rem; color: var(--muted); background: var(--surface); border-radius: 999px; padding: .1rem .5rem; }
 .column--teal { --col: #14b8a6; }
 .column--blue { --col: #3b82f6; }
 .column--orange { --col: #f59e0b; }

@@ -1,7 +1,7 @@
 <% lane_hidden = board.lane_hidden?(column[:key]) %>
 <section class="column column--<%= column[:color] %> <%= 'column--hidden' if lane_hidden %>" data-column="<%= column[:key] %>">
   <header class="column__header">
-    <h2><span class="column__dot"></span><%= column[:title] %></h2>
+    <h2 title="<%= column[:title] %>"><span class="column__dot"></span><span class="column__title"><%= column[:title] %></span></h2>
     <span class="column__header-right">
       <%= button_to toggle_hidden_board_path(board, lane: column[:key]), method: :patch,
             class: "icon-btn column__eye #{'column__eye--hidden' if lane_hidden}",
