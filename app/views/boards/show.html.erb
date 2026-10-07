@@ -33,7 +33,9 @@
               <label class="check"><%= f.check_box :hidden_lanes, { multiple: true, checked: @board.lane_hidden?(column[:key]), id: "board_hidden_lanes_#{column[:key]}", data: { action: "autosubmit#submit" } }, column[:key], nil %> <%= column[:title] %></label>
             <% end %>
             <hr>
-            <label class="check"><%= f.check_box :icebreaker, data: { action: "autosubmit#submit" } %> Icebreaker column</label>
+            <% Board::COLUMNS.select { |column| @board.optional_column?(column) }.each do |column| %>
+              <label class="check"><%= f.check_box column[:key], data: { action: "autosubmit#submit" } %> <%= column[:title] %> column</label>
+            <% end %>
             <label class="check"><%= f.check_box :hide_votes, data: { action: "autosubmit#submit" } %> Hide vote counts</label>
             <label class="check">Max votes <%= f.number_field :max_votes, min: 0, max: 99, class: "input input--xs", data: { action: "change->autosubmit#submit" } %></label>
           <% end %>

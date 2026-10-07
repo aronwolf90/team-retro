@@ -60,17 +60,21 @@ class CardTest < ActiveSupport::TestCase
     assert_equal 3, @board.votes_left_for("v2")
   end
 
-  test "importing action items from another board flattens merged cards" do
+  test "importing selected action items and carried-over cards from another board" do
     todo = @board.cards.create!(lane: :action_items, content: "Fix CI", author_name: "Kim")
     todo.merge!(@board.cards.create!(lane: :action_items, content: "Also flaky specs"))
-    @board.cards.create!(lane: :action_items, content: "Write docs")
+    skipped = @board.cards.create!(lane: :action_items, content: "Write docs")
+    carried = @board.cards.create!(lane: :last_time, content: "Old promise")
 
     next_board = Board.create!(name: "Next")
     assert_equal [ @board ], next_board.import_sources.to_a
-    assert_equal 2, next_board.import_action_items_from(@board)
-    assert_equal [ "Fix CI\n\nAlso flaky specs", "Write docs" ], next_board.cards_in(:last_time).map(&:content)
+    assert_equal [ [ "Fix CI\n\nAlso flaky specs", "Write docs" ], [ "Old promise" ] ],
+      next_board.import_sources.first.import_candidates.values.map { |cards| cards.map(&:full_content) }
+    assert_equal 2, next_board.import_cards_from(@board, [ todo.id.to_s, carried.id.to_s, @a.id.to_s ])
+    assert_equal [ "Fix CI\n\nAlso flaky specs", "Old promise" ], next_board.cards_in(:last_time).map(&:content)
     assert_equal "Kim", next_board.cards_in(:last_time).first.author_name
-    assert_equal 0, Board.create!(name: "Lonely").import_action_items_from(nil)
+    assert_not_includes next_board.cards.pluck(:content), skipped.content
+    assert_equal 0, next_board.import_cards_from(@board, nil)
   end
 
   test "hidden lanes tolerate a missing value" do

@@ -9,6 +9,8 @@ class Board < ApplicationRecord
     { key: :action_items, title: "Action Items", color: "purple" }
   ].freeze
 
+  OPTIONAL_COLUMNS = %i[icebreaker how_is_everyone].freeze
+  IMPORTABLE_LANES = %i[action_items last_time].freeze
   SORT_OPTIONS = %w[order votes].freeze
   LANE_KEYS = COLUMNS.map { |c| c[:key].to_s }.freeze
 
@@ -26,22 +28,28 @@ class Board < ApplicationRecord
   broadcasts_refreshes
 
   def columns
-    COLUMNS.select { |column| column[:key] != :icebreaker || icebreaker? }
+    COLUMNS.select { |column| !optional_column?(column) || self[column[:key]] }
+  end
+
+  def optional_column?(column)
+    OPTIONAL_COLUMNS.include?(column[:key])
   end
 
   def import_sources
     Board.where.not(id: id).order(created_at: :desc)
   end
 
-  def import_action_items_from(source)
-    return 0 unless source
-    imported = 0
-    source.cards_in(:action_items).each do |card|
-      lines = [ card.content, *card.children.map(&:content) ]
-      cards.create!(lane: :last_time, content: lines.join("\n\n"), author_name: card.author_name)
-      imported += 1
+  def import_candidates
+    IMPORTABLE_LANES.index_with { |lane| cards_in(lane).to_a }
+  end
+
+  def import_cards_from(source, card_ids)
+    ids = Array(card_ids).map(&:to_i)
+    selected = source.import_candidates.values.flatten.select { |card| ids.include?(card.id) }
+    selected.each do |card|
+      cards.create!(lane: :last_time, content: card.full_content, author_name: card.author_name)
     end
-    imported
+    selected.size
   end
 
   def hidden_lanes

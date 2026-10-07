@@ -89,10 +89,23 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     next_board = Board.last
     assert_empty next_board.cards
     get board_path(next_board)
-    assert_select "#import-menu select option", text: /Sprint 1/
+    assert_select "#import-menu turbo-frame[src=?]", import_board_path(next_board)
+    get import_board_path(next_board)
+    assert_select "select option[selected]", text: /Sprint 1/
+    assert_select "input[type=checkbox][name='card_ids[]'][checked]", count: 1
+    assert_select ".import-picker__card", text: /Kim: investigate flaky specs/
+    carried = board.cards.create!(lane: :last_time, content: "Carried over")
+    get import_board_path(next_board)
+    assert_select "input[name='card_ids[]'][value=?]:not([checked])", carried.id.to_s
+    assert_select "input[name='card_ids[]'][checked]", count: 1
+    carried.destroy
     post import_action_items_board_path(next_board), params: { source_board_id: board.id }
     follow_redirect!
-    assert_match "Imported 1 action item from “Sprint 1”", flash[:notice]
+    assert_match "Select at least one card", flash[:alert]
+    action_item = board.cards.find_by!(content: "Kim: investigate flaky specs")
+    post import_action_items_board_path(next_board), params: { source_board_id: board.id, card_ids: [ action_item.id, first.id ] }
+    follow_redirect!
+    assert_match "Imported 1 card from “Sprint 1”", flash[:notice]
     assert_equal [ "Kim: investigate flaky specs" ], next_board.cards_in(:last_time).map(&:content)
     post import_action_items_board_path(next_board), params: { source_board_id: next_board.id }
     assert_response :not_found
@@ -113,6 +126,20 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     post board_cards_path(board), params: { card: { lane: "icebreaker", content: "Favourite snack?" } }
     get board_path(board)
     assert_select "section[data-column=icebreaker] .card__text", text: "Favourite snack?"
+  end
+
+  test "the how is everyone column is on by default and can be turned off" do
+    login
+    post boards_path, params: { board: { name: "Retro" } }
+    board = Board.last
+    assert board.how_is_everyone?
+    get board_path(board)
+    assert_select "section[data-column=how_is_everyone]", count: 1
+
+    patch board_path(board), params: { board: { how_is_everyone: "0" } }
+    get board_path(board)
+    assert_select "section[data-column=how_is_everyone]", count: 0
+    assert_select "section[data-column=went_well]", count: 1
   end
 
   test "hidden columns blur other people's cards but not your own or other columns" do

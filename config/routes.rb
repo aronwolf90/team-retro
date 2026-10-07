@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :boards do
     member do
       patch :toggle_hidden
+      get :import
       post :import_action_items
     end
     resource :timer, only: %i[create update destroy], controller: "timers"

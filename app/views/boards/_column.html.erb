@@ -16,13 +16,11 @@
     <div class="add-card__row" id="add-card-trigger-<%= column[:key] %>" data-keep-state data-add-card-target="trigger">
       <button type="button" class="add-card__trigger" data-action="add-card#open">＋ Add a card</button>
       <% if column[:key] == :last_time && (sources = board.import_sources).any? %>
-        <details class="menu import-menu" data-keep-state id="import-menu" data-controller="picker" data-action="turbo:submit-end->picker#close">
+        <details class="menu import-menu" data-keep-state id="import-menu" data-controller="picker">
           <summary class="add-card__trigger add-card__import" title="Import action items from another board">⇣ Import</summary>
-          <div class="menu__body">
-            <%= form_with url: import_action_items_board_path(board), class: "stack" do |f| %>
-              <span class="menu__label">Copy the action items of…</span>
-              <%= f.select :source_board_id, sources.map { |b| [ "#{b.name} (#{b.created_at.strftime('%b %-d, %Y')})", b.id ] }, {}, class: "input input--sm", "aria-label": "Board to import from" %>
-              <%= f.submit "Import", class: "btn btn--primary btn--sm" %>
+          <div class="menu__body import-menu__body">
+            <%= turbo_frame_tag "import-picker-#{board.id}", src: import_board_path(board), loading: :lazy, data: { turbo_permanent: true } do %>
+              <span class="menu__label">Loading…</span>
             <% end %>
           </div>
         </details>

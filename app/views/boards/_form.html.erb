@@ -13,8 +13,8 @@
   <fieldset class="field">
     <legend>Columns</legend>
     <% Board::COLUMNS.each do |column| %>
-      <% if column[:key] == :icebreaker %>
-        <label class="check"><%= f.check_box :icebreaker %> <%= column[:title] %> <span class="muted">(optional)</span></label>
+      <% if board.optional_column?(column) %>
+        <label class="check"><%= f.check_box column[:key] %> <%= column[:title] %> <span class="muted">(optional)</span></label>
       <% else %>
         <label class="check check--fixed"><input type="checkbox" checked disabled> <%= column[:title] %></label>
       <% end %>

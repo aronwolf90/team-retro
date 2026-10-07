@@ -1,0 +1,26 @@
+<%= turbo_frame_tag "import-picker-#{@board.id}" do %>
+  <%= form_with url: import_board_path(@board), method: :get, class: "import-picker__source", data: { controller: "autosubmit" } do |f| %>
+    <span class="menu__label">Import from</span>
+    <%= f.select :source_board_id, @sources.map { |b| [ "#{b.name} (#{b.created_at.strftime('%b %-d, %Y')})", b.id ] }, { selected: @source&.id }, class: "input input--sm", "aria-label": "Board to import from", data: { action: "change->autosubmit#submit" } %>
+  <% end %>
+  <% if @source %>
+    <%= form_with url: import_action_items_board_path(@board), class: "import-picker", data: { turbo_frame: "_top", action: "turbo:submit-end->picker#close" } do |f| %>
+      <%= hidden_field_tag :source_board_id, @source.id, id: nil %>
+      <% @source.import_candidates.each do |lane, cards| %>
+        <fieldset class="import-picker__group">
+          <legend class="menu__label"><%= Board::COLUMNS.find { |c| c[:key] == lane }[:title] %></legend>
+          <% if cards.empty? %>
+            <span class="muted import-picker__empty">No cards</span>
+          <% end %>
+          <% cards.each do |card| %>
+            <label class="check import-picker__card">
+              <%= check_box_tag "card_ids[]", card.id, lane == :action_items, id: "import-card-#{card.id}" %>
+              <span><%= card.full_content %></span>
+            </label>
+          <% end %>
+        </fieldset>
+      <% end %>
+      <%= f.submit "Import selected", class: "btn btn--primary btn--sm" %>
+    <% end %>
+  <% end %>
+<% end %>

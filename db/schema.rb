@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_07_213845) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_07_220846) do
   create_table "boards", force: :cascade do |t|
     t.string "name", null: false
     t.integer "max_votes", default: 6, null: false
@@ -21,6 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_213845) do
     t.datetime "updated_at", null: false
     t.text "hidden_lanes", default: "[]", null: false
     t.boolean "icebreaker", default: false, null: false
+    t.boolean "how_is_everyone", default: true, null: false
   end
 
   create_table "cards", force: :cascade do |t|

@@ -30,6 +30,10 @@ class Card < ApplicationRecord
     Reaction::EMOJIS.filter_map { |emoji| [ emoji, grouped[emoji] ] if grouped[emoji] }
   end
 
+  def full_content
+    [ content, *children.map(&:content) ].join("\n\n")
+  end
+
   def authored_by?(token)
     author_token.present? && author_token == token
   end

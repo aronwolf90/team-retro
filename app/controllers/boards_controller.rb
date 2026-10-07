@@ -1,5 +1,5 @@
 class BoardsController < ApplicationController
-  before_action :set_board, only: %i[show edit update destroy toggle_hidden import_action_items]
+  before_action :set_board, only: %i[show edit update destroy toggle_hidden import import_action_items]
 
   def index
     @boards = Board.left_joins(:cards).group("boards.id")
@@ -42,10 +42,20 @@ class BoardsController < ApplicationController
     redirect_to @board, status: :see_other
   end
 
+  def import
+    @sources = @board.import_sources
+    @source = params[:source_board_id].present? ? @sources.find(params[:source_board_id]) : @sources.first
+    render layout: false
+  end
+
   def import_action_items
     source = @board.import_sources.find(params[:source_board_id])
-    imported = @board.import_action_items_from(source)
-    redirect_to @board, notice: "Imported #{imported} action #{'item'.pluralize(imported)} from “#{source.name}”.", status: :see_other
+    imported = @board.import_cards_from(source, params[:card_ids])
+    if imported.zero?
+      redirect_to @board, alert: "Select at least one card to import.", status: :see_other
+    else
+      redirect_to @board, notice: "Imported #{imported} #{'card'.pluralize(imported)} from “#{source.name}”.", status: :see_other
+    end
   end
 
   def destroy
@@ -60,6 +70,6 @@ class BoardsController < ApplicationController
   end
 
   def board_params
-    params.require(:board).permit(:name, :max_votes, :hide_votes, :icebreaker, :sort_by, hidden_lanes: [])
+    params.require(:board).permit(:name, :max_votes, :hide_votes, :icebreaker, :how_is_everyone, :sort_by, hidden_lanes: [])
   end
 end

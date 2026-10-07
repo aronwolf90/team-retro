@@ -167,6 +167,13 @@ select.input { appearance: auto; }
 .add-card__row[hidden] { display: none; }
 .add-card__row > .add-card__trigger { flex: 1; }
 .add-card__import { width: auto; white-space: nowrap; list-style: none; }
+.import-menu__body { width: 320px; max-width: calc(100vw - 2rem); }
+.import-picker__source { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .5rem; }
+.import-picker { display: flex; flex-direction: column; gap: .5rem; }
+.import-picker__group { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; max-height: 30vh; overflow-y: auto; }
+.import-picker__card { align-items: flex-start; white-space: pre-line; }
+.import-picker__card input { margin-top: .2rem; flex-shrink: 0; }
+.import-picker__empty { font-size: .85rem; padding: .2rem 0; }
 .add-card__trigger:hover { background: rgba(0,0,0,.05); color: var(--text); }
 .new-card { background: var(--surface); border-radius: 10px; padding: .5rem; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: .4rem; border-left: 4px solid var(--col); }
 .new-card[hidden] { display: none; }
