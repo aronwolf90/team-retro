@@ -156,6 +156,43 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     assert_match "My own card", response.body
   end
 
+  test "resetting votes removes every vote on the board" do
+    login
+    board = Board.create!(name: "Retro", max_votes: 3)
+    card = board.cards.create!(lane: :went_well, content: "Nice")
+    other_board_card = Board.create!(name: "Other").cards.create!(lane: :went_well, content: "Keep")
+    card.votes.create!(voter_token: "someone-else")
+    post card_votes_path(card)
+    other_board_card.votes.create!(voter_token: "someone-else")
+
+    delete reset_votes_board_path(board)
+    assert_redirected_to board
+    assert_equal 0, board.votes.count
+    assert_equal 1, other_board_card.votes.count
+    follow_redirect!
+    assert_select ".votes-left strong", text: "3"
+  end
+
+  test "board and column titles can be renamed" do
+    login
+    board = Board.create!(name: "Retro")
+
+    patch board_path(board), params: { board: { name: "Sprint 42" } }
+    assert_equal "Sprint 42", board.reload.name
+
+    patch board_path(board), params: { board: { column_titles: { went_well: "  Wins  ", bogus: "Nope" } } }
+    patch board_path(board), params: { board: { column_titles: { to_improve: "Pains" } } }
+    assert_equal({ "went_well" => "Wins", "to_improve" => "Pains" }, board.reload.column_titles)
+    get board_path(board)
+    assert_select "section[data-column=went_well] .column__title", text: "Wins"
+    assert_select "section[data-column=to_improve] .column__title", text: "Pains"
+    assert_select "section[data-column=action_items] .column__title", text: "Action Items"
+
+    patch board_path(board), params: { board: { column_titles: { went_well: "" } } }
+    assert_equal({ "to_improve" => "Pains" }, board.reload.column_titles)
+    assert_equal "Went Well", board.column_title(:went_well)
+  end
+
   private
 
   def login(name: "Sam")

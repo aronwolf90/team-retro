@@ -1,12 +1,17 @@
 <% lane_hidden = board.lane_hidden?(column[:key]) %>
 <section class="column column--<%= column[:color] %> <%= 'column--hidden' if lane_hidden %>" data-column="<%= column[:key] %>">
   <header class="column__header">
-    <h2 title="<%= column[:title] %>"><span class="column__dot"></span><span class="column__title"><%= column[:title] %></span></h2>
+    <div class="inline-title column__heading" data-controller="inline-title">
+      <h2 data-inline-title-target="view"><span class="column__dot"></span><button type="button" class="inline-title__button column__title" title="<%= column[:title] %> · click to rename" data-action="inline-title#edit"><%= column[:title] %></button></h2>
+      <%= form_with model: board, class: "inline-title__form", html: { hidden: true }, data: { inline_title_target: "form", action: "turbo:submit-end->inline-title#saved" } do |f| %>
+        <%= text_field_tag "board[column_titles][#{column[:key]}]", column[:title], id: nil, class: "input input--sm inline-title__input", maxlength: Board::COLUMN_TITLE_MAX_LENGTH, placeholder: Board::COLUMNS.find { |c| c[:key] == column[:key] }[:title], "aria-label": "Column title", data: { inline_title_target: "input", action: "keydown->inline-title#keydown blur->inline-title#commit" } %>
+      <% end %>
+    </div>
     <span class="column__header-right">
       <%= button_to toggle_hidden_board_path(board, lane: column[:key]), method: :patch,
             class: "icon-btn column__eye #{'column__eye--hidden' if lane_hidden}",
             title: (lane_hidden ? "Cards in this column are hidden from others. Click to reveal." : "Hide other people's cards in this column") do %>
-        <%= lane_hidden ? "🙈" : "👁" %>
+        <%= lane_hidden ? "🙈" : "👁️" %>
       <% end %>
       <span class="column__count" title="Cards in this column"><%= cards.size %></span>
     </span>

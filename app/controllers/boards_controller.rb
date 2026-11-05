@@ -1,5 +1,5 @@
 class BoardsController < ApplicationController
-  before_action :set_board, only: %i[show edit update destroy toggle_hidden import import_action_items]
+  before_action :set_board, only: %i[show edit update destroy toggle_hidden reset_votes import import_action_items]
 
   def index
     @boards = Board.left_joins(:cards).group("boards.id")
@@ -42,6 +42,11 @@ class BoardsController < ApplicationController
     redirect_to @board, status: :see_other
   end
 
+  def reset_votes
+    @board.reset_votes!
+    redirect_to @board, notice: "All votes have been reset.", status: :see_other
+  end
+
   def import
     @sources = @board.import_sources
     @source = params[:source_board_id].present? ? @sources.find(params[:source_board_id]) : @sources.first
@@ -70,6 +75,6 @@ class BoardsController < ApplicationController
   end
 
   def board_params
-    params.require(:board).permit(:name, :max_votes, :hide_votes, :icebreaker, :how_is_everyone, :sort_by, hidden_lanes: [])
+    params.require(:board).permit(:name, :max_votes, :hide_votes, :icebreaker, :how_is_everyone, :sort_by, hidden_lanes: [], column_titles: Board::LANE_KEYS)
   end
 end

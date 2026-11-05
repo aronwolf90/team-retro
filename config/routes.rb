@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :boards do
     member do
       patch :toggle_hidden
+      delete :reset_votes
       get :import
       post :import_action_items
     end

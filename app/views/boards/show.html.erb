@@ -6,8 +6,11 @@
   <div class="board__header">
     <div class="board__title">
       <%= link_to "‹ Boards", boards_path, class: "btn btn--ghost btn--sm" %>
-      <div>
-        <h1><%= @board.name %></h1>
+      <div class="inline-title" data-controller="inline-title">
+        <h1 data-inline-title-target="view"><button type="button" class="inline-title__button" title="Click to rename the board" data-action="inline-title#edit"><%= @board.name %></button></h1>
+        <%= form_with model: @board, class: "inline-title__form", html: { hidden: true }, data: { inline_title_target: "form", action: "turbo:submit-end->inline-title#saved" } do |f| %>
+          <%= f.text_field :name, class: "input inline-title__input inline-title__input--board", required: true, maxlength: 120, "aria-label": "Board name", data: { inline_title_target: "input", action: "keydown->inline-title#keydown blur->inline-title#commit" } %>
+        <% end %>
       </div>
     </div>
 
@@ -33,15 +36,16 @@
               <label class="check"><%= f.check_box :hidden_lanes, { multiple: true, checked: @board.lane_hidden?(column[:key]), id: "board_hidden_lanes_#{column[:key]}", data: { action: "autosubmit#submit" } }, column[:key], nil %> <%= column[:title] %></label>
             <% end %>
             <hr>
-            <% Board::COLUMNS.select { |column| @board.optional_column?(column) }.each do |column| %>
+            <% @board.all_columns.select { |column| @board.optional_column?(column) }.each do |column| %>
               <label class="check"><%= f.check_box column[:key], data: { action: "autosubmit#submit" } %> <%= column[:title] %> column</label>
             <% end %>
             <label class="check"><%= f.check_box :hide_votes, data: { action: "autosubmit#submit" } %> Hide vote counts</label>
             <label class="check">Max votes <%= f.number_field :max_votes, min: 0, max: 99, class: "input input--xs", data: { action: "change->autosubmit#submit" } %></label>
           <% end %>
           <hr>
+          <%= button_to "↺ Reset all votes", reset_votes_board_path(@board), method: :delete, class: "menu__item", form: { data: { turbo_confirm: "Remove every vote on this board? Everyone gets their votes back." } } %>
           <%= link_to "✎ Rename board", edit_board_path(@board), class: "menu__item" %>
-          <%= button_to "🗑 Delete board", @board, method: :delete, class: "menu__item menu__item--danger", form: { data: { turbo_confirm: "Delete this board and all its cards?" } } %>
+          <%= button_to "🗑️ Delete board", @board, method: :delete, class: "menu__item menu__item--danger", form: { data: { turbo_confirm: "Delete this board and all its cards?" } } %>
         </div>
       </details>
     </div>

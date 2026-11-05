@@ -13,9 +13,11 @@ class Board < ApplicationRecord
   IMPORTABLE_LANES = %i[action_items last_time].freeze
   SORT_OPTIONS = %w[order votes author].freeze
   LANE_KEYS = COLUMNS.map { |c| c[:key].to_s }.freeze
+  COLUMN_TITLE_MAX_LENGTH = 40
 
   # Columns whose cards are hidden from everyone except their author.
   serialize :hidden_lanes, coder: JSON
+  serialize :column_titles, coder: JSON
 
   has_many :cards, dependent: :destroy
   has_many :votes, through: :cards
@@ -28,7 +30,39 @@ class Board < ApplicationRecord
   broadcasts_refreshes
 
   def columns
-    COLUMNS.select { |column| !optional_column?(column) || self[column[:key]] }
+    all_columns.select { |column| !optional_column?(column) || self[column[:key]] }
+  end
+
+  def all_columns
+    COLUMNS.map { |column| column.merge(title: column_title(column[:key])) }
+  end
+
+  def column_title(lane)
+    column_titles[lane.to_s].presence || COLUMNS.find { |c| c[:key].to_s == lane.to_s }&.dig(:title)
+  end
+
+  def column_titles
+    super || {}
+  end
+
+  def column_titles=(value)
+    titles = column_titles.dup
+    value.to_h.each do |lane, title|
+      lane = lane.to_s
+      next unless LANE_KEYS.include?(lane)
+      title = title.to_s.squish.first(COLUMN_TITLE_MAX_LENGTH)
+      if title.blank? || title == COLUMNS.find { |c| c[:key].to_s == lane }[:title]
+        titles.delete(lane)
+      else
+        titles[lane] = title
+      end
+    end
+    super(titles)
+  end
+
+  def reset_votes!
+    Vote.where(card_id: cards.select(:id)).delete_all
+    touch
   end
 
   def optional_column?(column)

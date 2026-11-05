@@ -116,6 +116,11 @@ select.input { appearance: auto; }
 .board__header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1rem; }
 .board__title { display: flex; align-items: flex-start; gap: .5rem; }
 .board__title h1 { font-size: 1.35rem; }
+.inline-title__button { background: none; border: 0; padding: 0 .2rem; margin: 0 -.2rem; border-radius: 6px; font: inherit; color: inherit; text-align: left; cursor: text; }
+.inline-title__button:hover { background: rgba(0,0,0,.06); }
+.inline-title > [hidden] { display: none; }
+.inline-title__input { font-weight: 700; }
+.inline-title__input--board { font-size: 1.2rem; padding: .2rem .5rem; min-width: 18rem; }
 .board__tools { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
 .votes-left { font-size: .85rem; background: var(--surface); border: 1px solid var(--border); padding: .35rem .65rem; border-radius: 999px; }
 .votes-left--empty { color: var(--danger); border-color: #fecaca; }
@@ -146,7 +151,9 @@ select.input { appearance: auto; }
 .column { background: #eaecf2; border-radius: 12px; padding: .75rem; min-height: 60vh; display: flex; flex-direction: column; gap: .6rem; }
 .column__header { display: flex; align-items: center; justify-content: space-between; gap: .25rem; padding: 0 .25rem; }
 .column__header h2 { font-size: 1rem; display: flex; align-items: center; gap: .4rem; min-width: 0; white-space: nowrap; }
-.column__title { overflow: hidden; text-overflow: ellipsis; }
+.column__heading { flex: 1 1 auto; min-width: 0; }
+.column__title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.column__heading .inline-title__input { width: 100%; }
 .column__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--col); flex-shrink: 0; }
 .column__header-right { display: inline-flex; align-items: center; gap: .1rem; flex-shrink: 0; }
 .column__count { font-size: .8rem; color: var(--muted); background: var(--surface); border-radius: 999px; padding: .1rem .45rem; }

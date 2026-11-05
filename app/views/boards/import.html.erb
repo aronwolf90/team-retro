@@ -8,7 +8,7 @@
       <%= hidden_field_tag :source_board_id, @source.id, id: nil %>
       <% @source.import_candidates.each do |lane, cards| %>
         <fieldset class="import-picker__group">
-          <legend class="menu__label"><%= Board::COLUMNS.find { |c| c[:key] == lane }[:title] %></legend>
+          <legend class="menu__label"><%= @source.column_title(lane) %></legend>
           <% if cards.empty? %>
             <span class="muted import-picker__empty">No cards</span>
           <% end %>
