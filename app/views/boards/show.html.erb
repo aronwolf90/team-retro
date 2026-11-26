@@ -52,9 +52,10 @@
   </div>
 
   <% if @board.any_lane_hidden? %>
-    <p class="banner">🙈 Cards from other people are hidden in
+    <p class="banner" data-keep-state data-controller="dismissible" data-dismissible-key-value="hidden-cards-hint:<%= @board.id %>:<%= @board.hidden_lanes.sort.join(",") %>">🙈 Cards from other people are hidden in
       <strong><%= @board.columns.select { |c| @board.lane_hidden?(c[:key]) }.map { |c| c[:title] }.to_sentence %></strong>
-      while everyone brainstorms. Use the eye button in a column header to reveal them.</p>
+      while everyone brainstorms. Use the eye button in a column header to reveal them.
+      <button type="button" class="banner__close" aria-label="Close hint" title="Close hint" data-action="dismissible#dismiss">×</button></p>
   <% end %>
 
   <div class="columns">
