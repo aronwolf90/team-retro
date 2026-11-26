@@ -193,6 +193,43 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     assert_equal "Went Well", board.column_title(:went_well)
   end
 
+  test "a new board can start with the action items of an earlier board" do
+    login
+    older = Board.create!(name: "Sprint 1", created_at: 2.weeks.ago)
+    older.cards.create!(lane: :action_items, content: "Old item")
+    latest = Board.create!(name: "Sprint 2", created_at: 1.week.ago)
+    todo = latest.cards.create!(lane: :action_items, content: "Fix CI", author_name: "Kim")
+    todo.merge!(latest.cards.create!(lane: :action_items, content: "Also flaky specs"))
+    latest.cards.create!(lane: :went_well, content: "Not an action item")
+    Board.create!(name: "Locked", password: "pw").cards.create!(lane: :action_items, content: "Secret")
+
+    get new_board_path
+    assert_select "select[name=import_from_board_id] option[selected]", text: /Sprint 2/
+    assert_select "select[name=import_from_board_id] option", text: /Locked/, count: 0
+
+    post boards_path, params: { board: { name: "Sprint 3" }, import_from_board_id: latest.id }
+    board = Board.last
+    follow_redirect!
+    assert_match "Board created with 1 action item from “Sprint 2”", flash[:notice]
+    assert_equal [ "Fix CI\n\nAlso flaky specs" ], board.cards_in(:last_time).map(&:content)
+    assert_equal "Kim", board.cards_in(:last_time).first.author_name
+    assert_equal 1, board.cards.count
+
+    post boards_path, params: { board: { name: "Sprint 4" }, import_from_board_id: "" }
+    assert_empty Board.last.cards
+  end
+
+  test "a new board cannot import from a board the user cannot open" do
+    login
+    locked = Board.create!(name: "Locked", password: "pw")
+    locked.cards.create!(lane: :action_items, content: "Secret")
+
+    assert_no_difference "Board.count" do
+      post boards_path, params: { board: { name: "Sneaky" }, import_from_board_id: locked.id }
+    end
+    assert_response :not_found
+  end
+
   private
 
   def login(name: "Sam")
