@@ -1,8 +1,13 @@
 class BoardsController < ApplicationController
-  before_action :set_board, only: %i[show edit update destroy toggle_hidden reset_votes import import_action_items]
+  BOARD_ACTIONS = %i[show edit update destroy toggle_hidden reset_votes import import_action_items].freeze
+
+  skip_before_action :require_login, only: BOARD_ACTIONS
+  before_action :require_team_login, only: %i[new create]
+  before_action :set_board, only: BOARD_ACTIONS
+  before_action :require_board_access, only: BOARD_ACTIONS
 
   def index
-    @boards = Board.left_joins(:cards).group("boards.id")
+    @boards = (team_login? ? Board.all : accessible_boards).left_joins(:cards).group("boards.id")
       .select("boards.*, COUNT(cards.id) AS cards_count")
       .order(created_at: :desc)
   end
@@ -19,6 +24,7 @@ class BoardsController < ApplicationController
   def create
     @board = Board.new(board_params)
     if @board.save
+      remember_board_unlock(@board) if @board.password_protected?
       redirect_to @board, notice: "Board created. Share the link with your team!"
     else
       render :new, status: :unprocessable_entity
@@ -30,6 +36,7 @@ class BoardsController < ApplicationController
 
   def update
     if @board.update(board_params)
+      remember_board_unlock(@board) if @board.password_protected?
       redirect_to @board, status: :see_other
     else
       render :edit, status: :unprocessable_entity
@@ -48,13 +55,13 @@ class BoardsController < ApplicationController
   end
 
   def import
-    @sources = @board.import_sources
+    @sources = @board.import_sources(accessible_boards)
     @source = params[:source_board_id].present? ? @sources.find(params[:source_board_id]) : @sources.first
     render layout: false
   end
 
   def import_action_items
-    source = @board.import_sources.find(params[:source_board_id])
+    source = @board.import_sources(accessible_boards).find(params[:source_board_id])
     imported = @board.import_cards_from(source, params[:card_ids])
     if imported.zero?
       redirect_to @board, alert: "Select at least one card to import.", status: :see_other
@@ -75,6 +82,6 @@ class BoardsController < ApplicationController
   end
 
   def board_params
-    params.require(:board).permit(:name, :max_votes, :hide_votes, :icebreaker, :how_is_everyone, :sort_by, hidden_lanes: [], column_titles: Board::LANE_KEYS)
+    params.require(:board).permit(:name, :max_votes, :hide_votes, :icebreaker, :how_is_everyone, :sort_by, :password, :remove_password, hidden_lanes: [], column_titles: Board::LANE_KEYS)
   end
 end

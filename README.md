@@ -8,11 +8,14 @@
 A small, self-hosted clone of the default [EasyRetro](https://easyretro.io) board for **one team**.
 Built with Rails 8, Hotwire (Turbo + Stimulus) and SQLite on top of the stock `rails new`
 skeleton (Kamal, Thruster, RuboCop, Brakeman, GitHub Actions CI). No accounts: everybody shares
-one team password and picks a display name.
+one team password (boards can have their own) and picks a display name.
 
 ## Features
 
 - **Login with one team password** (`TEAM_PASSWORD`, defaults to `retro` in development).
+- **Board passwords** (optional, in the board settings): a board with its own password opens only
+  with that password, not with the team password. People who only know the board password log in
+  on the board's link and see just that board. Changing the password locks everyone out again.
 - **Name modal** pops up when the session has no name yet; click your name in the header to change it.
 - **Dashboard** of all boards with card counts, create / delete boards.
 - **Board**: *How is everyone?* · *From last retro* · *Went Well* · *To Improve* · *Action Items* (columns are fixed).

@@ -20,7 +20,7 @@
   <div class="add-card" data-controller="add-card">
     <div class="add-card__row" id="add-card-trigger-<%= column[:key] %>" data-keep-state data-add-card-target="trigger">
       <button type="button" class="add-card__trigger" data-action="add-card#open">＋ Add a card</button>
-      <% if column[:key] == :last_time && (sources = board.import_sources).any? %>
+      <% if column[:key] == :last_time && (sources = board.import_sources(accessible_boards)).any? %>
         <details class="menu import-menu" data-keep-state id="import-menu" data-controller="picker">
           <summary class="add-card__trigger add-card__import" title="Import action items from another board">⇣ Import</summary>
           <div class="menu__body import-menu__body">

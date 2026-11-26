@@ -19,6 +19,10 @@ class Board < ApplicationRecord
   serialize :hidden_lanes, coder: JSON
   serialize :column_titles, coder: JSON
 
+  # Optional board password. When set, only it opens the board, not the team password.
+  has_secure_password validations: false
+  attribute :remove_password, :boolean
+
   has_many :cards, dependent: :destroy
   has_many :votes, through: :cards
   has_many :reactions, through: :cards
@@ -26,6 +30,9 @@ class Board < ApplicationRecord
   validates :name, presence: true, length: { maximum: 120 }
   validates :max_votes, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 99 }
   validates :sort_by, inclusion: { in: SORT_OPTIONS }
+  validate { errors.add(:password, :password_too_long) if password.to_s.bytesize > ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED }
+
+  before_save { self.password_digest = nil if remove_password }
 
   broadcasts_refreshes
 
@@ -69,8 +76,12 @@ class Board < ApplicationRecord
     OPTIONAL_COLUMNS.include?(column[:key])
   end
 
-  def import_sources
-    Board.where.not(id: id).order(created_at: :desc)
+  def password_protected?
+    password_digest.present?
+  end
+
+  def import_sources(boards)
+    boards.where.not(id: id).order(created_at: :desc)
   end
 
   def import_candidates

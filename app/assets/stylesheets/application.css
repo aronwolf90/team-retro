@@ -76,6 +76,8 @@ select.input { appearance: auto; }
 .stack { display: flex; flex-direction: column; gap: 1rem; }
 .form-actions { display: flex; justify-content: flex-end; gap: .5rem; }
 .inline-form { display: inline; }
+.password-row { display: flex; gap: .5rem; }
+.password-row .input { flex: 1; min-width: 0; }
 .linkish { background: none; border: 0; padding: 0; font: inherit; font-size: .78rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
 .linkish:hover { color: var(--danger); }
 
