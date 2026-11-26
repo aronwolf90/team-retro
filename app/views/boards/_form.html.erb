@@ -32,7 +32,10 @@
   <fieldset class="field">
     <legend>Board password</legend>
     <span class="muted">Only people with this password can open the board. The team password does not open it.</span>
-    <%= f.password_field :password, class: "input", autocomplete: "new-password", placeholder: board.password_protected? ? "Leave empty to keep the current password" : "Optional" %>
+    <div class="password-row" data-controller="password-generator">
+      <%= f.password_field :password, class: "input", autocomplete: "new-password", placeholder: board.password_protected? ? "Leave empty to keep the current password" : "Optional", data: { password_generator_target: "input" } %>
+      <button type="button" class="btn" data-action="password-generator#generate">Generate</button>
+    </div>
     <% if board.password_protected? %>
       <label class="check"><%= f.check_box :remove_password %> Remove the password</label>
     <% end %>

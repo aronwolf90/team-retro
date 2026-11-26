@@ -102,6 +102,10 @@ class BoardPasswordTest < ActionDispatch::IntegrationTest
 
   test "creating a board with a password" do
     login
+    get new_board_path
+    assert_select "[data-controller=password-generator] input[type=password][name='board[password]']"
+    assert_select "[data-controller=password-generator] button[data-action='password-generator#generate']", text: "Generate"
+
     post boards_path, params: { board: { name: "Private", password: "pw" } }
     board = Board.last
     assert board.authenticate("pw")
