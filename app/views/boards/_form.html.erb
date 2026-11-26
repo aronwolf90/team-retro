@@ -20,6 +20,13 @@
       <% end %>
     <% end %>
   </fieldset>
+  <% if (sources = local_assigns[:import_sources]).present? %>
+    <label class="field">
+      <span>Import action items from</span>
+      <%= select_tag :import_from_board_id, options_for_select([ [ "Don't import", "" ] ] + sources.map { |b| [ board_option_label(b), b.id ] }, local_assigns[:import_from_board_id]), class: "input" %>
+      <span class="muted">Copies that board's action items into “From last retro”.</span>
+    </label>
+  <% end %>
   <fieldset class="field">
     <legend>Board options</legend>
     <span class="muted">Hide cards written by others (per column, reveal after brainstorming):</span>

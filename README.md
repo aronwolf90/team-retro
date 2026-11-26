@@ -19,7 +19,8 @@ one team password (boards can have their own) and picks a display name.
 - **Name modal** pops up when the session has no name yet; click your name in the header to change it.
 - **Dashboard** of all boards with card counts, create / delete boards.
 - **Board**: *How is everyone?* · *From last retro* · *Went Well* · *To Improve* · *Action Items* (columns are fixed).
-- **Follow-up**: a new board starts with the previous board's action items copied into *From last retro*.
+- **Follow-up**: a new board starts with an earlier board's action items copied into *From last retro*
+  (pick the board when creating it, defaults to the newest; or import selected cards later).
 - **Cards**: add with Enter, inline edit, delete, author shown on the card.
 - **Drag & drop**: reorder inside a column, move between columns, or drop a card on top of another
   card to **merge** them (votes and reactions follow). Merged cards can be split again.
