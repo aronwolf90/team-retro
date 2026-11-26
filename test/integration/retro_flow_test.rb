@@ -77,6 +77,7 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     get board_path(board)
     assert_response :success
     assert_select ".banner", text: /To Improve/
+    assert_select ".banner[data-controller=dismissible][data-dismissible-key-value=?] button[data-action='dismissible#dismiss']", "hidden-cards-hint:#{board.id}:to_improve"
 
     patch toggle_hidden_board_path(board, lane: "went_well")
     assert_equal %w[to_improve went_well], board.reload.hidden_lanes.sort
