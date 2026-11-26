@@ -10,7 +10,16 @@
     <% end %>
   </div>
 
-  <% if @boards.empty? %>
+  <% if @team_names.any? %>
+    <nav class="team-filter" aria-label="Filter boards by team">
+      <%= link_to "All teams", boards_path(team: ""), class: [ "chip", { "chip--active": @team.nil? } ], aria: { current: ("page" if @team.nil?) } %>
+      <% @team_names.each do |team| %>
+        <%= link_to team, boards_path(team: team), class: [ "chip", { "chip--active": team == @team } ], aria: { current: ("page" if team == @team) } %>
+      <% end %>
+    </nav>
+  <% end %>
+
+  <% if @board_groups.empty? %>
     <div class="empty">
       <p>No boards yet. Create the first one for your next sprint retro.</p>
       <% if team_login? %>
@@ -18,27 +27,34 @@
       <% end %>
     </div>
   <% else %>
-    <ul class="board-list">
-      <% @boards.each do |board| %>
-        <li class="board-item">
-          <% if can_access_board?(board) %>
-            <%= link_to board, class: "board-item__link" do %>
-              <span class="board-item__name"><%= "🔒 " if board.password_protected? %><%= board.name %></span>
-              <span class="board-item__meta">
-                <%= pluralize(board.cards_count, "card") %> · created <%= board.created_at.strftime("%b %-d, %Y") %>
-              </span>
-            <% end %>
-            <div class="board-item__actions">
-              <%= button_to "Delete", board, method: :delete, class: "btn btn--danger btn--sm", form: { data: { turbo_confirm: "Delete “#{board.name}” and all its cards?" } } %>
-            </div>
-          <% else %>
-            <%= link_to new_board_unlock_path(board), class: "board-item__link" do %>
-              <span class="board-item__name">🔒 <%= board.name %></span>
-              <span class="board-item__meta">Needs the board password · created <%= board.created_at.strftime("%b %-d, %Y") %></span>
-            <% end %>
+    <% @board_groups.each do |team, boards| %>
+      <section class="board-group">
+        <% if @team_names.any? %>
+          <h2 class="board-group__title"><%= team || "No team" %></h2>
+        <% end %>
+        <ul class="board-list">
+          <% boards.each do |board| %>
+            <li class="board-item">
+              <% if can_access_board?(board) %>
+                <%= link_to board, class: "board-item__link" do %>
+                  <span class="board-item__name"><%= "🔒 " if board.password_protected? %><%= board.name %></span>
+                  <span class="board-item__meta">
+                    <%= pluralize(board.cards_count, "card") %> · created <%= board.created_at.strftime("%b %-d, %Y") %>
+                  </span>
+                <% end %>
+                <div class="board-item__actions">
+                  <%= button_to "Delete", board, method: :delete, class: "btn btn--danger btn--sm", form: { data: { turbo_confirm: "Delete “#{board.name}” and all its cards?" } } %>
+                </div>
+              <% else %>
+                <%= link_to new_board_unlock_path(board), class: "board-item__link" do %>
+                  <span class="board-item__name">🔒 <%= board.name %></span>
+                  <span class="board-item__meta">Needs the board password · created <%= board.created_at.strftime("%b %-d, %Y") %></span>
+                <% end %>
+              <% end %>
+            </li>
           <% end %>
-        </li>
-      <% end %>
-    </ul>
+        </ul>
+      </section>
+    <% end %>
   <% end %>
 </div>

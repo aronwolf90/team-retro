@@ -75,7 +75,7 @@ class ApplicationController < ActionController::Base
 
   # New session id on every login against session fixation, keeping who the user is and what they unlocked.
   def renew_session
-    kept = session.to_hash.slice("authenticated", "user_token", "user_name", "unlocked_boards")
+    kept = session.to_hash.slice("authenticated", "user_token", "user_name", "unlocked_boards", "team_name")
     reset_session
     session.update(kept)
   end
