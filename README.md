@@ -5,7 +5,7 @@
 > **Note:** This is a hobby project to experiment with vibe coding. The whole app was built by
 > describing what I wanted to Claude Code and iterating on the result. Expect rough edges.
 
-A small, self-hosted clone of the default [EasyRetro](https://easyretro.io) board for **one team**.
+A small, self-hosted clone of the default [EasyRetro](https://easyretro.io) board for **one or more teams**.
 Built with Rails 8, Hotwire (Turbo + Stimulus) and SQLite on top of the stock `rails new`
 skeleton (Kamal, Thruster, RuboCop, Brakeman, GitHub Actions CI). No accounts: everybody shares
 one team password (boards can have their own) and picks a display name.
@@ -18,8 +18,11 @@ one team password (boards can have their own) and picks a display name.
   on the board's link and see just that board. Changing the password locks everyone out again.
 - **Name modal** pops up when the session has no name yet; click your name in the header to change it.
 - **Dashboard** of all boards with card counts, create / delete boards.
+- **Teams**: give a board an optional team name to group it on the dashboard. Filter the dashboard
+  by team; the choice is remembered and preselected for new boards. Teams are labels only: everyone
+  with the team password still sees every board.
 - **Board**: *How is everyone?* · *From last retro* · *Went Well* · *To Improve* · *Action Items* (columns are fixed).
-- **Follow-up**: a new board starts with the previous board's action items copied into *From last retro*.
+- **Follow-up**: import the action items of an earlier board (by default the newest board of the same team) into *From last retro*.
 - **Cards**: add with Enter, inline edit, delete, author shown on the card.
 - **Drag & drop**: reorder inside a column, move between columns, or drop a card on top of another
   card to **merge** them (votes and reactions follow). Merged cards can be split again.

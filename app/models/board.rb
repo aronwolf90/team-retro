@@ -14,6 +14,7 @@ class Board < ApplicationRecord
   SORT_OPTIONS = %w[order votes author].freeze
   LANE_KEYS = COLUMNS.map { |c| c[:key].to_s }.freeze
   COLUMN_TITLE_MAX_LENGTH = 40
+  TEAM_NAME_MAX_LENGTH = 60
 
   # Columns whose cards are hidden from everyone except their author.
   serialize :hidden_lanes, coder: JSON
@@ -27,7 +28,12 @@ class Board < ApplicationRecord
   has_many :votes, through: :cards
   has_many :reactions, through: :cards
 
+  # Optional team label, used to group boards on the dashboard.
+  normalizes :team_name, with: ->(name) { name.squish.presence }
+  before_validation :reuse_team_name_spelling, if: :team_name_changed?
+
   validates :name, presence: true, length: { maximum: 120 }
+  validates :team_name, length: { maximum: TEAM_NAME_MAX_LENGTH }
   validates :max_votes, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 99 }
   validates :sort_by, inclusion: { in: SORT_OPTIONS }
   validate { errors.add(:password, :password_too_long) if password.to_s.bytesize > ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED }
@@ -35,6 +41,10 @@ class Board < ApplicationRecord
   before_save { self.password_digest = nil if remove_password }
 
   broadcasts_refreshes
+
+  def self.team_names
+    where.not(team_name: nil).distinct.pluck(:team_name).sort_by(&:downcase)
+  end
 
   def columns
     all_columns.select { |column| !optional_column?(column) || self[column[:key]] }
@@ -82,6 +92,11 @@ class Board < ApplicationRecord
 
   def import_sources(boards)
     boards.where.not(id: id).order(created_at: :desc)
+  end
+
+  # The newest earlier board of the same team, else the newest of any team.
+  def default_import_source(sources)
+    sources.find_by(team_name: team_name) || sources.first
   end
 
   def import_candidates
@@ -152,5 +167,13 @@ class Board < ApplicationRecord
 
   def timer_finished?
     timer_ends_at.present? && timer_ends_at <= Time.current
+  end
+
+  private
+
+  # "payments" joins the existing "Payments" team instead of starting a second one.
+  def reuse_team_name_spelling
+    return if team_name.nil?
+    self.team_name = Board.where.not(id: id).where("LOWER(team_name) = LOWER(?)", team_name).pick(:team_name) || team_name
   end
 end

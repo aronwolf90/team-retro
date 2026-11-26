@@ -5,11 +5,17 @@ class BoardsController < ApplicationController
   before_action :require_team_login, only: %i[new create]
   before_action :set_board, only: BOARD_ACTIONS
   before_action :require_board_access, only: BOARD_ACTIONS
+  before_action :set_team_names, only: %i[index new create edit update]
 
+  # GET /?team=Payments filters by team and remembers it; ?team= shows all teams again.
   def index
-    @boards = (team_login? ? Board.all : accessible_boards).left_joins(:cards).group("boards.id")
+    session[:team_name] = params[:team].presence if params.key?(:team)
+    @team = session[:team_name] if @team_names.include?(session[:team_name])
+    boards = listed_boards.left_joins(:cards).group("boards.id")
       .select("boards.*, COUNT(cards.id) AS cards_count")
       .order(created_at: :desc)
+    boards = boards.where(team_name: @team) if @team
+    @board_groups = boards.group_by(&:team_name).sort_by { |team, _| [ team.nil? ? 1 : 0, team.to_s.downcase ] }
   end
 
   def show
@@ -19,13 +25,14 @@ class BoardsController < ApplicationController
 
   def new
     @board = Board.new(name: "Sprint retro #{Date.current.strftime('%b %-d')}", max_votes: 6,
-      hidden_lanes: %w[how_is_everyone went_well to_improve])
+      hidden_lanes: %w[how_is_everyone went_well to_improve], team_name: session[:team_name])
   end
 
   def create
     @board = Board.new(board_params)
     if @board.save
       remember_board_unlock(@board) if @board.password_protected?
+      session[:team_name] = @board.team_name if @board.team_name
       redirect_to @board, notice: "Board created. Share the link with your team!"
     else
       render :new, status: :unprocessable_entity
@@ -57,7 +64,7 @@ class BoardsController < ApplicationController
 
   def import
     @sources = @board.import_sources(accessible_boards)
-    @source = params[:source_board_id].present? ? @sources.find(params[:source_board_id]) : @sources.first
+    @source = params[:source_board_id].present? ? @sources.find(params[:source_board_id]) : @board.default_import_source(@sources)
     render layout: false
   end
 
@@ -82,7 +89,16 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id])
   end
 
+  # The team login lists every board (locked ones with an unlock link), a board password only its board.
+  def listed_boards
+    team_login? ? Board.all : accessible_boards
+  end
+
+  def set_team_names
+    @team_names = listed_boards.team_names
+  end
+
   def board_params
-    params.require(:board).permit(:name, :max_votes, :hide_votes, :icebreaker, :how_is_everyone, :sort_by, :password, :remove_password, hidden_lanes: [], column_titles: Board::LANE_KEYS)
+    params.require(:board).permit(:name, :team_name, :max_votes, :hide_votes, :icebreaker, :how_is_everyone, :sort_by, :password, :remove_password, hidden_lanes: [], column_titles: Board::LANE_KEYS)
   end
 end

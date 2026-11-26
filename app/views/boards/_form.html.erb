@@ -6,6 +6,15 @@
     <span>Board name</span>
     <%= f.text_field :name, class: "input", required: true, maxlength: 120, autofocus: true %>
   </label>
+  <label class="field">
+    <span>Team</span>
+    <%= f.text_field :team_name, class: "input", maxlength: Board::TEAM_NAME_MAX_LENGTH, list: "team-names", autocomplete: "off", placeholder: "Optional, groups the board on the dashboard" %>
+    <datalist id="team-names">
+      <% team_names.each do |team| %>
+        <%= tag.option value: team %>
+      <% end %>
+    </datalist>
+  </label>
   <label class="field field--inline">
     <span>Max votes per person</span>
     <%= f.number_field :max_votes, class: "input input--sm", min: 0, max: 99 %>
