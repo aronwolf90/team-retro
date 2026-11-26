@@ -1,13 +1,15 @@
 class CardsController < ApplicationController
+  skip_before_action :require_login
+  before_action :set_board, only: :create
   before_action :set_card, except: :create
+  before_action :require_board_access
 
   def create
-    board = Board.find(params[:board_id])
-    card = board.cards.new(card_params.merge(author_name: current_user_name, author_token: current_user_token))
+    card = @board.cards.new(card_params.merge(author_name: current_user_name, author_token: current_user_token))
     if card.save
-      redirect_to board, status: :see_other
+      redirect_to @board, status: :see_other
     else
-      redirect_to board, alert: card.errors.full_messages.to_sentence, status: :see_other
+      redirect_to @board, alert: card.errors.full_messages.to_sentence, status: :see_other
     end
   end
 
@@ -45,8 +47,13 @@ class CardsController < ApplicationController
 
   private
 
+  def set_board
+    @board = Board.find(params[:board_id])
+  end
+
   def set_card
     @card = Card.find(params[:id])
+    @board = @card.board
   end
 
   def card_params

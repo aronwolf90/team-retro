@@ -82,9 +82,9 @@ class CardTest < ActiveSupport::TestCase
     carried = @board.cards.create!(lane: :last_time, content: "Old promise")
 
     next_board = Board.create!(name: "Next")
-    assert_equal [ @board ], next_board.import_sources.to_a
+    assert_equal [ @board ], next_board.import_sources(Board.all).to_a
     assert_equal [ [ "Fix CI\n\nAlso flaky specs", "Write docs" ], [ "Old promise" ] ],
-      next_board.import_sources.first.import_candidates.values.map { |cards| cards.map(&:full_content) }
+      next_board.import_sources(Board.all).first.import_candidates.values.map { |cards| cards.map(&:full_content) }
     assert_equal 2, next_board.import_cards_from(@board, [ todo.id.to_s, carried.id.to_s, @a.id.to_s ])
     assert_equal [ "Fix CI\n\nAlso flaky specs", "Old promise" ], next_board.cards_in(:last_time).map(&:content)
     assert_equal "Kim", next_board.cards_in(:last_time).first.author_name

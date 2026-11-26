@@ -1,5 +1,7 @@
 class TimersController < ApplicationController
+  skip_before_action :require_login
   before_action :set_board
+  before_action :require_board_access
 
   # Start a timer for N minutes.
   def create

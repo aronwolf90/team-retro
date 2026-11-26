@@ -1,5 +1,7 @@
 class VotesController < ApplicationController
+  skip_before_action :require_login
   before_action :set_card
+  before_action :require_board_access
 
   def create
     board = @card.board
@@ -20,5 +22,6 @@ class VotesController < ApplicationController
 
   def set_card
     @card = Card.find(params[:card_id])
+    @board = @card.board
   end
 end

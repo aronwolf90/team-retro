@@ -5,27 +5,38 @@
       <h1>Retro boards</h1>
       <p class="muted">All of your team's past and current retrospectives.</p>
     </div>
-    <%= link_to "＋ New board", new_board_path, class: "btn btn--primary" %>
+    <% if team_login? %>
+      <%= link_to "＋ New board", new_board_path, class: "btn btn--primary" %>
+    <% end %>
   </div>
 
   <% if @boards.empty? %>
     <div class="empty">
       <p>No boards yet. Create the first one for your next sprint retro.</p>
-      <%= link_to "Create a board", new_board_path, class: "btn btn--primary" %>
+      <% if team_login? %>
+        <%= link_to "Create a board", new_board_path, class: "btn btn--primary" %>
+      <% end %>
     </div>
   <% else %>
     <ul class="board-list">
       <% @boards.each do |board| %>
         <li class="board-item">
-          <%= link_to board, class: "board-item__link" do %>
-            <span class="board-item__name"><%= board.name %></span>
-            <span class="board-item__meta">
-              <%= pluralize(board.cards_count, "card") %> · created <%= board.created_at.strftime("%b %-d, %Y") %>
-            </span>
+          <% if can_access_board?(board) %>
+            <%= link_to board, class: "board-item__link" do %>
+              <span class="board-item__name"><%= "🔒 " if board.password_protected? %><%= board.name %></span>
+              <span class="board-item__meta">
+                <%= pluralize(board.cards_count, "card") %> · created <%= board.created_at.strftime("%b %-d, %Y") %>
+              </span>
+            <% end %>
+            <div class="board-item__actions">
+              <%= button_to "Delete", board, method: :delete, class: "btn btn--danger btn--sm", form: { data: { turbo_confirm: "Delete “#{board.name}” and all its cards?" } } %>
+            </div>
+          <% else %>
+            <%= link_to new_board_unlock_path(board), class: "board-item__link" do %>
+              <span class="board-item__name">🔒 <%= board.name %></span>
+              <span class="board-item__meta">Needs the board password · created <%= board.created_at.strftime("%b %-d, %Y") %></span>
+            <% end %>
           <% end %>
-          <div class="board-item__actions">
-            <%= button_to "Delete", board, method: :delete, class: "btn btn--danger btn--sm", form: { data: { turbo_confirm: "Delete “#{board.name}” and all its cards?" } } %>
-          </div>
         </li>
       <% end %>
     </ul>

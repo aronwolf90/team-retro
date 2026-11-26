@@ -29,6 +29,14 @@
     <% end %>
     <label class="check"><%= f.check_box :hide_votes %> Hide vote counts</label>
   </fieldset>
+  <fieldset class="field">
+    <legend>Board password</legend>
+    <span class="muted">Only people with this password can open the board. The team password does not open it.</span>
+    <%= f.password_field :password, class: "input", autocomplete: "new-password", placeholder: board.password_protected? ? "Leave empty to keep the current password" : "Optional" %>
+    <% if board.password_protected? %>
+      <label class="check"><%= f.check_box :remove_password %> Remove the password</label>
+    <% end %>
+  </fieldset>
   <div class="form-actions">
     <%= link_to "Cancel", board.persisted? ? board : boards_path, class: "btn btn--ghost" %>
     <%= f.submit board.persisted? ? "Save settings" : "Create board", class: "btn btn--primary" %>

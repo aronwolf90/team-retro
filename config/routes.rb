@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       post :import_action_items
     end
     resource :timer, only: %i[create update destroy], controller: "timers"
+    resource :unlock, only: %i[new create]
 
     resources :cards, only: %i[create update destroy], shallow: true do
       member do

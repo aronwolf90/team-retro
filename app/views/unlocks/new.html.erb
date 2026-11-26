@@ -1,0 +1,17 @@
+<div class="auth-card">
+  <div class="brand brand--big"><span class="brand__logo">↺</span> Team Retro</div>
+  <p class="muted">🔒 <strong><%= @board.name %></strong> has its own password. Enter it to join this board.</p>
+  <%= form_with url: board_unlock_path(@board), class: "stack" do |f| %>
+    <% unless current_user_name %>
+      <label class="field">
+        <span>Your name</span>
+        <%= f.text_field :name, placeholder: "Alex", maxlength: 40, autocomplete: "name", class: "input", autofocus: true %>
+      </label>
+    <% end %>
+    <label class="field">
+      <span>Board password</span>
+      <%= f.password_field :password, required: true, autocomplete: "current-password", class: "input", autofocus: current_user_name.present? %>
+    </label>
+    <%= f.submit "Join the board", class: "btn btn--primary btn--block" %>
+  <% end %>
+</div>
