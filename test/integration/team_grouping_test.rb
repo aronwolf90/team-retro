@@ -61,4 +61,13 @@ class TeamGroupingTest < ActionDispatch::IntegrationTest
     get import_board_path(board)
     assert_select "select option[selected][value=?]", own.id.to_s, text: /Payments sprint 1 · Payments/
   end
+
+  test "a new board imports from the newest board of the remembered team by default" do
+    own = Board.create!(name: "Payments sprint 1", team_name: "Payments", created_at: 1.day.ago)
+    Board.create!(name: "Platform sprint 1", team_name: "Platform")
+
+    get boards_path(team: "Payments")
+    get new_board_path
+    assert_select "select[name=import_from_board_id] option[selected][value=?]", own.id.to_s
+  end
 end

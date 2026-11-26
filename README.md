@@ -22,7 +22,8 @@ one team password (boards can have their own) and picks a display name.
   by team; the choice is remembered and preselected for new boards. Teams are labels only: everyone
   with the team password still sees every board.
 - **Board**: *How is everyone?* · *From last retro* · *Went Well* · *To Improve* · *Action Items* (columns are fixed).
-- **Follow-up**: import the action items of an earlier board (by default the newest board of the same team) into *From last retro*.
+- **Follow-up**: a new board starts with an earlier board's action items copied into *From last retro*
+  (pick the board when creating it, defaults to the newest board of the same team; or import selected cards later).
 - **Cards**: add with Enter, inline edit, delete, author shown on the card.
 - **Drag & drop**: reorder inside a column, move between columns, or drop a card on top of another
   card to **merge** them (votes and reactions follow). Merged cards can be split again.

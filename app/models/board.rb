@@ -103,6 +103,10 @@ class Board < ApplicationRecord
     IMPORTABLE_LANES.index_with { |lane| cards_in(lane).to_a }
   end
 
+  def import_action_items_from(source)
+    import_cards_from(source, source.cards_in(:action_items).map(&:id))
+  end
+
   def import_cards_from(source, card_ids)
     ids = Array(card_ids).map(&:to_i)
     selected = source.import_candidates.values.flatten.select { |card| ids.include?(card.id) }
