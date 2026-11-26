@@ -18,7 +18,8 @@ class BoardsController < ApplicationController
   end
 
   def new
-    @board = Board.new(name: "Sprint retro #{Date.current.strftime('%b %-d')}", max_votes: 6)
+    @board = Board.new(name: "Sprint retro #{Date.current.strftime('%b %-d')}", max_votes: 6,
+      hidden_lanes: %w[how_is_everyone went_well to_improve])
   end
 
   def create

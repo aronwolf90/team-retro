@@ -156,6 +156,19 @@ class RetroFlowTest < ActionDispatch::IntegrationTest
     assert_match "My own card", response.body
   end
 
+  test "new boards hide the brainstorming columns by default, existing boards keep their setting" do
+    login
+    get new_board_path
+    assert_select "input[name='board[hidden_lanes][]'][checked]", count: 3
+    %w[how_is_everyone went_well to_improve].each do |lane|
+      assert_select "input[name='board[hidden_lanes][]'][value=?][checked]", lane
+    end
+
+    board = Board.create!(name: "Retro")
+    get edit_board_path(board)
+    assert_select "input[name='board[hidden_lanes][]'][checked]", count: 0
+  end
+
   test "resetting votes removes every vote on the board" do
     login
     board = Board.create!(name: "Retro", max_votes: 3)
